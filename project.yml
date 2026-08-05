@@ -1,0 +1,52 @@
+name: Time4
+options:
+  bundleIdPrefix: com.naoki
+  deploymentTarget:
+    iOS: "17.0"
+    watchOS: "10.0"
+packages:
+  Time4Shared:
+    path: Time4Shared
+targets:
+  Time4:
+    type: application
+    platform: iOS
+    sources:
+      - Time4iOS
+    dependencies:
+      - package: Time4Shared
+      - target: Time4Watch Watch App
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.naoki.Time4
+      MARKETING_VERSION: "0.1.0"
+      CURRENT_PROJECT_VERSION: "1"
+      INFOPLIST_KEY_CFBundleDisplayName: Time4
+      INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone:
+        - UIInterfaceOrientationPortrait
+  Time4Watch Watch App:
+    type: application
+    platform: watchOS
+    sources:
+      - Time4Watch
+    dependencies:
+      - package: Time4Shared
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.naoki.Time4.watchkitapp
+      MARKETING_VERSION: "0.1.0"
+      CURRENT_PROJECT_VERSION: "1"
+      INFOPLIST_KEY_CFBundleDisplayName: Time4
+      INFOPLIST_KEY_WKApplication: true
+schemes:
+  Time4:
+    build:
+      targets:
+        Time4: all
+        Time4Watch Watch App: all
+    run:
+      config: Debug
+  Time4Watch:
+    build:
+      targets:
+        Time4Watch Watch App: all
+    run:
+      config: Debug

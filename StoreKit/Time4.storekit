@@ -1,0 +1,35 @@
+{
+  "identifier" : "4E34A432-1D7D-4320-A6CC-8BF2E99BDFB0",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "¥500",
+      "familyShareable" : false,
+      "internalID" : "8C777D91-9CE1-4D30-B98A-CB53D999CF53",
+      "localizations" : [
+        {
+          "description" : "プリセット無制限、並び替え、アイコン変更、タイマー名カスタマイズ。",
+          "displayName" : "Time4 Pro",
+          "locale" : "ja_JP"
+        }
+      ],
+      "productID" : "time4.pro.lifetime",
+      "referenceName" : "Time4 Pro Lifetime",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "0000000000",
+    "_developerTeamID" : "XXXXXXXXXX",
+    "_lastSynchronizedDate" : 0
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}
