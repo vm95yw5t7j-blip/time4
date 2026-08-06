@@ -40,6 +40,7 @@ final class WatchTimerModel: NSObject, ObservableObject {
         }
         self.runningTimer = engine.pause(runningTimer)
         persistRunningTimer()
+        cancelTimerNotification()
     }
 
     func resume() {
@@ -48,12 +49,13 @@ final class WatchTimerModel: NSObject, ObservableObject {
         }
         self.runningTimer = engine.resume(runningTimer)
         persistRunningTimer()
+        rescheduleNotificationFromRunningTimer()
     }
 
     func stop() {
         runningTimer = nil
         UserDefaults.standard.removeObject(forKey: runningKey)
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["time4.timer.finished"])
+        cancelTimerNotification()
     }
 
     func apply(snapshot: Time4Snapshot) {
@@ -102,14 +104,43 @@ final class WatchTimerModel: NSObject, ObservableObject {
             return
         }
 
+        cancelTimerNotification()
+
         let content = UNMutableNotificationContent()
         content.title = "Time4"
         content.body = timer.name.isEmpty ? "タイマーが終了しました" : "\(timer.name) が終了しました"
         content.sound = timer.soundEnabled ? .default : nil
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(timer.durationSeconds), repeats: false)
-        let request = UNNotificationRequest(identifier: "time4.timer.finished", content: content, trigger: trigger)
+        let request = UNNotificationRequest(identifier: Self.notificationID, content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request)
+    }
+
+    private func rescheduleNotificationFromRunningTimer() {
+        cancelTimerNotification()
+        guard
+            let runningTimer,
+            runningTimer.state == .running,
+            runningTimer.soundEnabled || runningTimer.hapticEnabled
+        else {
+            return
+        }
+
+        let content = UNMutableNotificationContent()
+        content.title = "Time4"
+        content.body = "\(runningTimer.displayName) が終了しました"
+        content.sound = runningTimer.soundEnabled ? .default : nil
+
+        let trigger = UNTimeIntervalNotificationTrigger(
+            timeInterval: TimeInterval(max(1, runningTimer.remainingSeconds())),
+            repeats: false
+        )
+        let request = UNNotificationRequest(identifier: Self.notificationID, content: content, trigger: trigger)
+        UNUserNotificationCenter.current().add(request)
+    }
+
+    private func cancelTimerNotification() {
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [Self.notificationID])
     }
 
     private func requestNotificationPermission() {
@@ -126,6 +157,8 @@ final class WatchTimerModel: NSObject, ObservableObject {
 
         return TimerEngine().refresh(decoded)
     }
+
+    private static let notificationID = "time4.watch.timer.finished"
 }
 
 extension WatchTimerModel: WCSessionDelegate {

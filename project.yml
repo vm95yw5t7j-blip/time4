@@ -1,5 +1,6 @@
 name: Time4
 options:
+  minimumXcodeGenVersion: 2.45.4
   bundleIdPrefix: com.naoki
   deploymentTarget:
     iOS: "17.0"
@@ -17,6 +18,7 @@ targets:
       - package: Time4Shared
       - target: Time4Watch Watch App
     settings:
+      GENERATE_INFOPLIST_FILE: YES
       PRODUCT_BUNDLE_IDENTIFIER: com.naoki.Time4
       MARKETING_VERSION: "0.1.0"
       CURRENT_PROJECT_VERSION: "1"
@@ -31,6 +33,7 @@ targets:
     dependencies:
       - package: Time4Shared
     settings:
+      GENERATE_INFOPLIST_FILE: YES
       PRODUCT_BUNDLE_IDENTIFIER: com.naoki.Time4.watchkitapp
       MARKETING_VERSION: "0.1.0"
       CURRENT_PROJECT_VERSION: "1"
@@ -44,6 +47,7 @@ schemes:
         Time4Watch Watch App: all
     run:
       config: Debug
+      storeKitConfiguration: StoreKit/Time4.storekit
   Time4Watch:
     build:
       targets:

@@ -38,13 +38,15 @@ iPhoneでも使用でき、Apple Watchなら手首からさらに素早くタイ
 
 ## Build On Mac
 
-Install XcodeGen, then run:
+Clone the repository on a Mac, then run:
 
 ```bash
-cd /path/to/Time4
-xcodegen generate
-open Time4.xcodeproj
+./scripts/bootstrap-mac.sh
 ```
+
+The script checks Xcode, installs XcodeGen through Homebrew when needed, generates the project, validates its schemes, and opens Xcode. Select the `Time4` scheme and an iPhone simulator, then press Run.
+
+Every push to `main` also runs an unsigned iPhone Simulator build on GitHub Actions. Real Apple Watch behavior still requires a paired simulator or physical devices.
 
 Run shared package tests:
 

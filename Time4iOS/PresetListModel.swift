@@ -99,6 +99,7 @@ final class PresetListModel: ObservableObject {
         }
         self.runningTimer = timerEngine.pause(runningTimer)
         persistRunningTimer()
+        cancelTimerNotification()
     }
 
     func resume() {
@@ -113,7 +114,7 @@ final class PresetListModel: ObservableObject {
     func stopTimer() {
         runningTimer = nil
         UserDefaults.standard.removeObject(forKey: runningKey)
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [Self.notificationID])
+        cancelTimerNotification()
     }
 
     private func normalizeSortOrder() {
@@ -167,6 +168,8 @@ final class PresetListModel: ObservableObject {
             return
         }
 
+        cancelTimerNotification()
+
         let content = UNMutableNotificationContent()
         content.title = "Time4"
         content.body = timer.name.isEmpty ? "タイマーが終了しました" : "\(timer.name) が終了しました"
@@ -178,7 +181,7 @@ final class PresetListModel: ObservableObject {
     }
 
     private func rescheduleNotificationFromRunningTimer() {
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [Self.notificationID])
+        cancelTimerNotification()
         guard
             let runningTimer,
             runningTimer.state == .running,
@@ -196,6 +199,10 @@ final class PresetListModel: ObservableObject {
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(seconds), repeats: false)
         let request = UNNotificationRequest(identifier: Self.notificationID, content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request)
+    }
+
+    private func cancelTimerNotification() {
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [Self.notificationID])
     }
 
     private static let notificationID = "time4.iphone.timer.finished"

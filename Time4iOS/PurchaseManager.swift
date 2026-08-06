@@ -35,9 +35,13 @@ final class PurchaseManager: ObservableObject {
     }
 
     func purchasePro() async -> Bool {
-        guard let product else {
+        if product == nil {
             await load()
-            return await purchasePro()
+        }
+
+        guard let product else {
+            errorMessage = "購入情報を読み込めませんでした。"
+            return false
         }
 
         do {
