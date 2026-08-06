@@ -50,14 +50,6 @@ final class WatchTimerModel: NSObject, ObservableObject {
         persistRunningTimer()
     }
 
-    func add30Seconds() {
-        guard let runningTimer else {
-            return
-        }
-        self.runningTimer = engine.addSeconds(Time4Policy.addSecondsStep, to: runningTimer)
-        persistRunningTimer()
-    }
-
     func stop() {
         runningTimer = nil
         UserDefaults.standard.removeObject(forKey: runningKey)

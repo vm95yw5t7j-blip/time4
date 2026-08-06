@@ -8,7 +8,7 @@
 - iPhone preset list and editor.
 - iPhone 2x2 timer selection.
 - iPhone one-tap timer start.
-- iPhone running timer screen with progress, pause, resume, stop, +30, and -30.
+- iPhone running timer screen with progress, pause, resume, and stop.
 - iPhone local notification scheduling.
 - iPhone running timer persistence.
 - Watch preset list.

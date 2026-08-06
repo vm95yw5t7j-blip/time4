@@ -80,22 +80,6 @@ public struct TimerEngine: Sendable {
         return next
     }
 
-    public func addSeconds(_ seconds: Int, to timer: RunningTimer, now: Date = .now) -> RunningTimer {
-        var next = timer
-        switch timer.state {
-        case .running:
-            next.endsAt = timer.endsAt.addingTimeInterval(TimeInterval(seconds))
-            if next.remainingSeconds(now: now) <= 0 {
-                next.state = .finished
-            }
-        case .paused:
-            next.pausedRemainingSeconds = max(0, (timer.pausedRemainingSeconds ?? 0) + seconds)
-        case .finished:
-            break
-        }
-        return next
-    }
-
     public func refresh(_ timer: RunningTimer, now: Date = .now) -> RunningTimer {
         var next = timer
         if timer.state == .running && timer.remainingSeconds(now: now) == 0 {

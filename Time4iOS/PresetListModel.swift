@@ -110,24 +110,6 @@ final class PresetListModel: ObservableObject {
         rescheduleNotificationFromRunningTimer()
     }
 
-    func add30Seconds() {
-        guard let runningTimer else {
-            return
-        }
-        self.runningTimer = timerEngine.addSeconds(Time4Policy.addSecondsStep, to: runningTimer)
-        persistRunningTimer()
-        rescheduleNotificationFromRunningTimer()
-    }
-
-    func subtract30Seconds() {
-        guard let runningTimer else {
-            return
-        }
-        self.runningTimer = timerEngine.addSeconds(-Time4Policy.addSecondsStep, to: runningTimer)
-        persistRunningTimer()
-        rescheduleNotificationFromRunningTimer()
-    }
-
     func stopTimer() {
         runningTimer = nil
         UserDefaults.standard.removeObject(forKey: runningKey)

@@ -23,24 +23,13 @@ struct RunningTimerView: View {
                 .minimumScaleFactor(0.7)
                 .contentTransition(.numericText())
 
-            HStack(spacing: 8) {
-                Button {
-                    timer.state == .paused ? model.resume() : model.pause()
-                } label: {
-                    Image(systemName: timer.state == .paused ? "play.fill" : "pause.fill")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
-
-                Button {
-                    model.add30Seconds()
-                } label: {
-                    Text("+30")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
+            Button {
+                timer.state == .paused ? model.resume() : model.pause()
+            } label: {
+                Image(systemName: timer.state == .paused ? "play.fill" : "pause.fill")
+                    .frame(maxWidth: .infinity)
             }
+            .buttonStyle(.bordered)
 
             Button(role: .destructive) {
                 model.stop()

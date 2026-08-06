@@ -25,33 +25,14 @@ struct RunningTimerPhoneView: View {
                 .minimumScaleFactor(0.65)
                 .contentTransition(.numericText())
 
-            HStack(spacing: 12) {
-                Button {
-                    model.subtract30Seconds()
-                } label: {
-                    Text("-30")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
-
-                Button {
-                    timer.state == .paused ? model.resume() : model.pause()
-                } label: {
-                    Label(timer.state == .paused ? "再開" : "一時停止", systemImage: timer.state == .paused ? "play.fill" : "pause.fill")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-
-                Button {
-                    model.add30Seconds()
-                } label: {
-                    Text("+30")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
+            Button {
+                timer.state == .paused ? model.resume() : model.pause()
+            } label: {
+                Label(timer.state == .paused ? "再開" : "一時停止", systemImage: timer.state == .paused ? "play.fill" : "pause.fill")
+                    .frame(maxWidth: .infinity)
             }
+            .buttonStyle(.borderedProminent)
+            .padding(.horizontal)
 
             Button(role: .destructive) {
                 model.stopTimer()

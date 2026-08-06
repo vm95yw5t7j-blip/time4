@@ -31,8 +31,6 @@ iPhone:
 - Remaining time.
 - Progress display.
 - Pause, resume, stop.
-- Add 30 seconds.
-- Subtract 30 seconds where useful.
 - Edit timer duration.
 - Local notification on finish.
 - Restore running timer.
@@ -48,7 +46,6 @@ Apple Watch:
 - One-tap start.
 - Remaining time.
 - Pause, resume, stop.
-- Add 30 seconds.
 - Haptic feedback on finish.
 
 ## Device Roles
@@ -92,6 +89,7 @@ Future versions may add realtime shared running timer control.
 ## Engineering Rules
 
 - Timer progress must be calculated from `endsAt`.
+- A running timer's duration cannot be adjusted. Users choose one of up to four preset timers before starting.
 - Running timer state must be persisted so the watch can restore it after returning from the watch face.
 - iPhone running timer state must also be persisted so it restores after app restart.
 - Preset edits during a running timer should not mutate the active timer; the active timer stores a snapshot of preset and timer names.

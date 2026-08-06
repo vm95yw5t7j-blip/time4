@@ -3,7 +3,6 @@ import Foundation
 public enum Time4Policy {
     public static let freePresetLimit = 1
     public static let maxTimersPerPreset = 4
-    public static let addSecondsStep = 30
 
     public static func canCreatePreset(currentCount: Int, isProUnlocked: Bool) -> Bool {
         isProUnlocked || currentCount < freePresetLimit
