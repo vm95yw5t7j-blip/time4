@@ -5,6 +5,7 @@ import PackageDescription
 let package = Package(
     name: "Time4Shared",
     platforms: [
+        .macOS(.v13),
         .iOS(.v17),
         .watchOS(.v10)
     ],

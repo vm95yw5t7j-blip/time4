@@ -13,13 +13,16 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install XcodeGen
         run: brew install xcodegen
 
       - name: Generate Xcode project
         run: xcodegen generate
+
+      - name: Test shared timer logic
+        run: swift test --package-path Time4Shared
 
       - name: Build iPhone simulator app
         run: >-
