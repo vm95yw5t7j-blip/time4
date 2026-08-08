@@ -46,7 +46,13 @@ Clone the repository on a Mac, then run:
 
 The script checks Xcode, installs XcodeGen through Homebrew when needed, generates the project, validates its schemes, and opens Xcode. Select the `Time4` scheme and an iPhone simulator, then press Run.
 
+Before enabling Xcode Cloud, commit the Mac-generated and verified `Time4.xcodeproj` as described in the setup guide. Keep `project.yml` as the source of truth and regenerate the project whenever its settings change.
+
 Every push to `main` also runs an unsigned iPhone Simulator build on GitHub Actions. Real Apple Watch behavior still requires a paired simulator or physical devices.
+
+Detailed setup guides:
+
+- [Mac初回起動からXcode Cloud設定まで](docs/XCODE_CLOUD_SETUP.md)
 
 Run shared package tests:
 
@@ -57,4 +63,4 @@ swift test
 
 ## Notes
 
-This repository was scaffolded in a Linux environment, so Xcode build verification has not been run here.
+The iPhone Simulator build and shared package tests are verified on GitHub Actions. Visual simulator checks, Apple Watch connectivity, signing, and physical-device behavior still require a Mac and Apple devices.
