@@ -319,6 +319,16 @@ xcodebuild -project Time4.xcodeproj -list
 
 `StoreKit/Time4.storekit`はローカル購入テスト用。Xcode Cloudの最初のBuildでは購入テストを行わず、ビルド成功を優先する。
 
+### `WKCompanionAppBundleIdentifier`がないためインストールできない
+
+Watchアプリには、親になるiPhoneアプリのBundle IDが必要。`project.yml`のWatchターゲットに次の設定があることを確認する。
+
+```yaml
+INFOPLIST_KEY_WKCompanionAppBundleIdentifier: com.naoki.Time4
+```
+
+Bundle IDを変更した場合は、この値もiPhoneターゲットのBundle IDと同じ値に変更してから`xcodegen generate`を再実行する。
+
 ## 15. 初回成功後に行うこと
 
 最初のビルド成功後は、App Store Connectから管理できる。
