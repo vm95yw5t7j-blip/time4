@@ -1,9 +1,14 @@
 import Foundation
+import OSLog
 import Time4Shared
 import WatchConnectivity
 
 final class WatchSyncController: NSObject, WCSessionDelegate {
     private let session: WCSession? = WCSession.isSupported() ? .default : nil
+    private let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier ?? "Time4",
+        category: "WatchSync"
+    )
     private var latestSnapshot: Time4Snapshot?
 
     func start() {
@@ -29,7 +34,7 @@ final class WatchSyncController: NSObject, WCSessionDelegate {
             let message = try WatchSyncCodec.encodeSnapshot(latestSnapshot)
             try session.updateApplicationContext(message)
         } catch {
-            assertionFailure("Failed to sync Time4 snapshot: \(error)")
+            logger.error("Preset sync deferred: \(error.localizedDescription, privacy: .public)")
         }
     }
 
@@ -48,5 +53,16 @@ final class WatchSyncController: NSObject, WCSessionDelegate {
 
     func sessionDidDeactivate(_ session: WCSession) {
         session.activate()
+    }
+
+    func sessionWatchStateDidChange(_ session: WCSession) {
+        sendLatestSnapshot()
+    }
+
+    func sessionReachabilityDidChange(_ session: WCSession) {
+        guard session.isReachable else {
+            return
+        }
+        sendLatestSnapshot()
     }
 }
