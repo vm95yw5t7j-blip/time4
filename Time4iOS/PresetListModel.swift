@@ -155,14 +155,14 @@ final class PresetListModel: ObservableObject {
         persistRunningTimer()
 
         if didFinish {
-            resetFinishedTimer(after: .seconds(1), id: refreshed.id)
+            resetFinishedTimer(after: .seconds(1), timerID: refreshed.timerID)
         }
     }
 
-    private func resetFinishedTimer(after delay: Duration, id: UUID) {
+    private func resetFinishedTimer(after delay: Duration, timerID: UUID) {
         Task { [weak self] in
             try? await Task.sleep(for: delay)
-            guard self?.runningTimer?.id == id, self?.runningTimer?.state == .finished else {
+            guard self?.runningTimer?.timerID == timerID, self?.runningTimer?.state == .finished else {
                 return
             }
             self?.stopTimer()
