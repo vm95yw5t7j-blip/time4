@@ -15,7 +15,6 @@ public struct RunningTimer: Codable, Equatable, Sendable {
     public var presetID: UUID
     public var presetName: String
     public var timerID: UUID
-    public var timerName: String
     public var durationSeconds: Int
     public var startedAt: Date
     public var endsAt: Date
@@ -34,7 +33,6 @@ public struct RunningTimer: Codable, Equatable, Sendable {
         self.presetID = preset.id
         self.presetName = preset.name
         self.timerID = timer.id
-        self.timerName = timer.name
         self.durationSeconds = timer.durationSeconds
         self.startedAt = now
         self.endsAt = now.addingTimeInterval(TimeInterval(timer.durationSeconds))
@@ -54,10 +52,6 @@ public struct RunningTimer: Codable, Equatable, Sendable {
         case .finished:
             return 0
         }
-    }
-
-    public var displayName: String {
-        timerName.isEmpty ? presetName : timerName
     }
 }
 

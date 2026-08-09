@@ -18,6 +18,10 @@ The MVP is not a sequence timer.
 
 Each timer inside a preset is independent. On Apple Watch, a preset opens to up to four large buttons in a 2x2 layout, and tapping one starts only that timer.
 
+Timer buttons show only their duration. The MVP does not use labels such as short, normal, long, or maximum.
+
+The visual direction is black-first with a warm orange accent. The running screen shows remaining time inside a circular ring that drains as time passes on both iPhone and Apple Watch.
+
 ## MVP
 
 iPhone:
@@ -92,7 +96,7 @@ Future versions may add realtime shared running timer control.
 - A running timer's duration cannot be adjusted. Users choose one of up to four preset timers before starting.
 - Running timer state must be persisted so the watch can restore it after returning from the watch face.
 - iPhone running timer state must also be persisted so it restores after app restart.
-- Preset edits during a running timer should not mutate the active timer; the active timer stores a snapshot of preset and timer names.
+- Preset edits during a running timer should not mutate the active timer; the active timer stores a snapshot of the preset name and selected duration.
 - Running timer state stores `startedAt`, `endsAt`, pause state, paused remaining seconds, timer ID, preset ID, and execution device.
 - Free to Pro upgrade must keep existing data.
 - Restore purchase must be implemented before App Store submission.

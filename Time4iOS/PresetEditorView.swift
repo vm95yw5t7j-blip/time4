@@ -73,7 +73,6 @@ struct PresetEditorView: View {
 
         preset.timers.append(
             TimerItem(
-                name: "",
                 durationSeconds: 60,
                 sortOrder: preset.timers.count
             )
@@ -102,7 +101,6 @@ private struct TimerEditorRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            TextField("タイマー名", text: $timer.name)
             Stepper(value: $timer.durationSeconds, in: 1...35_999, step: 30) {
                 Text(timer.displayDuration)
                     .font(.headline)
@@ -121,16 +119,15 @@ private struct WatchPreviewGrid: View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 2), spacing: 8) {
             ForEach(timers) { timer in
                 VStack(spacing: 4) {
-                    if !timer.name.isEmpty {
-                        Text(timer.name)
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
                     Text(timer.displayDuration)
                         .font(.headline)
                 }
                 .frame(maxWidth: .infinity, minHeight: 64)
-                .background(.thinMaterial)
+                .background(Color(white: 0.12))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                }
                 .clipShape(RoundedRectangle(cornerRadius: 8))
             }
         }

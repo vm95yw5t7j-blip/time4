@@ -6,40 +6,70 @@ struct RunningTimerView: View {
     let timer: RunningTimer
 
     var body: some View {
-        VStack(spacing: 8) {
-            VStack(spacing: 2) {
+        ZStack {
+            Color.black.ignoresSafeArea()
+
+            VStack(spacing: 5) {
                 Text(timer.presetName)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
-                Text(timer.displayName)
-                    .font(.headline)
-                    .lineLimit(1)
-            }
 
-            Text(format(timer.remainingSeconds()))
-                .font(.system(size: 40, weight: .bold, design: .rounded))
-                .monospacedDigit()
-                .minimumScaleFactor(0.7)
-                .contentTransition(.numericText())
+                ZStack {
+                    Circle()
+                        .stroke(Color.white.opacity(0.12), lineWidth: 7)
 
-            Button {
-                timer.state == .paused ? model.resume() : model.pause()
-            } label: {
-                Image(systemName: timer.state == .paused ? "play.fill" : "pause.fill")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.bordered)
+                    Circle()
+                        .trim(from: 0, to: remainingFraction)
+                        .stroke(
+                            timer.state == .paused ? Color.yellow : Color.orange,
+                            style: StrokeStyle(lineWidth: 7, lineCap: .round)
+                        )
+                        .rotationEffect(.degrees(-90))
+                        .animation(.linear(duration: 0.25), value: timer.remainingSeconds())
 
-            Button(role: .destructive) {
-                model.stop()
-            } label: {
-                Label("終了", systemImage: "xmark")
-                    .frame(maxWidth: .infinity)
+                    Text(format(timer.remainingSeconds()))
+                        .font(.system(size: 25, weight: .bold, design: .rounded))
+                        .monospacedDigit()
+                        .minimumScaleFactor(0.55)
+                        .lineLimit(1)
+                        .contentTransition(.numericText())
+                        .padding(14)
+                }
+                .frame(width: 92, height: 92)
+
+                HStack(spacing: 8) {
+                    Button {
+                        timer.state == .paused ? model.resume() : model.pause()
+                    } label: {
+                        Image(systemName: timer.state == .paused ? "play.fill" : "pause.fill")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.orange)
+                    .foregroundStyle(.black)
+                    .disabled(timer.state == .finished)
+
+                    Button(role: .destructive) {
+                        model.stop()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                }
             }
-            .buttonStyle(.bordered)
+            .padding(.horizontal, 6)
         }
-        .padding(.horizontal, 6)
+    }
+
+    private var remainingFraction: CGFloat {
+        guard timer.durationSeconds > 0 else {
+            return 0
+        }
+
+        let remaining = CGFloat(timer.remainingSeconds())
+        return max(0, min(1, remaining / CGFloat(timer.durationSeconds)))
     }
 
     private func format(_ seconds: Int) -> String {

@@ -8,6 +8,8 @@ struct Time4WatchApp: App {
         WindowGroup {
             WatchRootView()
                 .environmentObject(model)
+                .preferredColorScheme(.dark)
+                .tint(.orange)
         }
     }
 }

@@ -16,7 +16,6 @@ struct ProPaywallView: View {
                 Label("プリセット無制限", systemImage: "infinity")
                 Label("プリセット並び替え", systemImage: "arrow.up.arrow.down")
                 Label("アイコン変更", systemImage: "sparkles")
-                Label("タイマー名のカスタマイズ", systemImage: "textformat")
                 if let errorMessage = purchaseManager.errorMessage {
                     Text(errorMessage)
                         .font(.footnote)

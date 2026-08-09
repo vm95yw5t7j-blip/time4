@@ -14,25 +14,25 @@ struct TimerGridWatchView: View {
                     Button {
                         model.start(preset: preset, timer: timer)
                     } label: {
-                        VStack(spacing: 4) {
-                            if !timer.name.isEmpty {
-                                Text(timer.name)
-                                    .font(.caption2)
-                                    .lineLimit(1)
+                        Text(timer.displayDuration)
+                            .font(.title3.bold())
+                            .foregroundStyle(.white)
+                            .minimumScaleFactor(0.7)
+                            .lineLimit(1)
+                            .frame(maxWidth: .infinity, minHeight: 70)
+                            .background(Color(white: 0.12))
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color.white.opacity(0.12), lineWidth: 1)
                             }
-                            Text(timer.displayDuration)
-                                .font(.title3.bold())
-                                .minimumScaleFactor(0.7)
-                                .lineLimit(1)
-                        }
-                        .frame(maxWidth: .infinity, minHeight: 70)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.blue)
+                    .buttonStyle(.plain)
                 }
             }
             .padding(.horizontal, 4)
         }
+        .background(Color.black.ignoresSafeArea())
         .navigationTitle(preset.name)
     }
 }

@@ -43,10 +43,10 @@ final class PresetListModel: ObservableObject {
                 icon: "timer",
                 sortOrder: nextOrder,
                 timers: [
-                    TimerItem(name: "短め", durationSeconds: 60, sortOrder: 0),
-                    TimerItem(name: "通常", durationSeconds: 180, sortOrder: 1),
-                    TimerItem(name: "長め", durationSeconds: 300, sortOrder: 2),
-                    TimerItem(name: "最大", durationSeconds: 600, sortOrder: 3)
+                    TimerItem(durationSeconds: 60, sortOrder: 0),
+                    TimerItem(durationSeconds: 180, sortOrder: 1),
+                    TimerItem(durationSeconds: 300, sortOrder: 2),
+                    TimerItem(durationSeconds: 600, sortOrder: 3)
                 ]
             )
         )
@@ -172,7 +172,7 @@ final class PresetListModel: ObservableObject {
 
         let content = UNMutableNotificationContent()
         content.title = "Time4"
-        content.body = timer.name.isEmpty ? "タイマーが終了しました" : "\(timer.name) が終了しました"
+        content.body = "タイマーが終了しました"
         content.sound = timer.soundEnabled ? .default : nil
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(timer.durationSeconds), repeats: false)
@@ -193,7 +193,7 @@ final class PresetListModel: ObservableObject {
         let seconds = max(1, runningTimer.remainingSeconds())
         let content = UNMutableNotificationContent()
         content.title = "Time4"
-        content.body = "\(runningTimer.displayName) が終了しました"
+        content.body = "\(runningTimer.presetName)のタイマーが終了しました"
         content.sound = runningTimer.soundEnabled ? .default : nil
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(seconds), repeats: false)

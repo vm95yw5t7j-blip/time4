@@ -108,7 +108,7 @@ final class WatchTimerModel: NSObject, ObservableObject {
 
         let content = UNMutableNotificationContent()
         content.title = "Time4"
-        content.body = timer.name.isEmpty ? "タイマーが終了しました" : "\(timer.name) が終了しました"
+        content.body = "タイマーが終了しました"
         content.sound = timer.soundEnabled ? .default : nil
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(timer.durationSeconds), repeats: false)
@@ -128,7 +128,7 @@ final class WatchTimerModel: NSObject, ObservableObject {
 
         let content = UNMutableNotificationContent()
         content.title = "Time4"
-        content.body = "\(runningTimer.displayName) が終了しました"
+        content.body = "\(runningTimer.presetName)のタイマーが終了しました"
         content.sound = runningTimer.soundEnabled ? .default : nil
 
         let trigger = UNTimeIntervalNotificationTrigger(

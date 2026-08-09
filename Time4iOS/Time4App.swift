@@ -9,6 +9,8 @@ struct Time4App: App {
         WindowGroup {
             PresetListView()
                 .environmentObject(model)
+                .preferredColorScheme(.dark)
+                .tint(.orange)
         }
     }
 }

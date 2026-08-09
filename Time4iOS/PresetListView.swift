@@ -19,7 +19,7 @@ struct PresetListView: View {
                                 HStack(spacing: 12) {
                                     Image(systemName: preset.icon)
                                         .frame(width: 28, height: 28)
-                                        .foregroundStyle(.blue)
+                                        .foregroundStyle(.orange)
                                     VStack(alignment: .leading, spacing: 3) {
                                         Text(preset.name)
                                             .font(.headline)
@@ -43,6 +43,8 @@ struct PresetListView: View {
                         Text(model.isProUnlocked ? "Pro: プリセット無制限" : "無料版はプリセット1つまで。iPhoneでもApple Watchでもワンタップで開始できます。")
                     }
                 }
+                .scrollContentBackground(.hidden)
+                .background(Color.black)
                 .navigationTitle("Time4")
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {

@@ -14,27 +14,26 @@ struct TimerGridPhoneView: View {
                     Button {
                         model.start(preset: preset, timer: timer)
                     } label: {
-                        VStack(spacing: 8) {
-                            if !timer.name.isEmpty {
-                                Text(timer.name)
-                                    .font(.subheadline)
-                                    .lineLimit(1)
-                                    .foregroundStyle(.secondary)
+                        Text(timer.displayDuration)
+                            .font(.system(.title, design: .rounded, weight: .bold))
+                            .foregroundStyle(.white)
+                            .minimumScaleFactor(0.75)
+                            .lineLimit(1)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 142)
+                            .background(Color(white: 0.12))
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color.white.opacity(0.12), lineWidth: 1)
                             }
-                            Text(timer.displayDuration)
-                                .font(.system(.title, design: .rounded, weight: .bold))
-                                .minimumScaleFactor(0.75)
-                                .lineLimit(1)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 142)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.blue)
+                    .buttonStyle(.plain)
                 }
             }
             .padding()
         }
+        .background(Color.black.ignoresSafeArea())
         .navigationTitle(preset.name)
         .navigationBarTitleDisplayMode(.inline)
     }

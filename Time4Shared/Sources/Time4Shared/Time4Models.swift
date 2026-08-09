@@ -35,7 +35,6 @@ public struct Preset: Identifiable, Codable, Equatable, Sendable {
 
 public struct TimerItem: Identifiable, Codable, Equatable, Comparable, Sendable {
     public var id: UUID
-    public var name: String
     public var durationSeconds: Int
     public var sortOrder: Int
     public var hapticEnabled: Bool
@@ -43,14 +42,12 @@ public struct TimerItem: Identifiable, Codable, Equatable, Comparable, Sendable 
 
     public init(
         id: UUID = UUID(),
-        name: String = "",
         durationSeconds: Int,
         sortOrder: Int = 0,
         hapticEnabled: Bool = true,
         soundEnabled: Bool = false
     ) {
         self.id = id
-        self.name = name
         self.durationSeconds = max(1, durationSeconds)
         self.sortOrder = sortOrder
         self.hapticEnabled = hapticEnabled
