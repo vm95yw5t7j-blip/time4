@@ -29,6 +29,10 @@ final class WatchTimerModel: NSObject, ObservableObject {
     }
 
     func start(preset: Preset, timer: TimerItem) {
+        guard runningTimer == nil else {
+            return
+        }
+
         runningTimer = RunningTimer(preset: preset, timer: timer, executionDevice: .appleWatch)
         persistRunningTimer()
         scheduleNotification(for: timer)
@@ -86,6 +90,20 @@ final class WatchTimerModel: NSObject, ObservableObject {
 
         if didFinish && refreshed.hapticEnabled {
             WKInterfaceDevice.current().play(.notification)
+        }
+
+        if didFinish {
+            resetFinishedTimer(after: .seconds(1), id: refreshed.id)
+        }
+    }
+
+    private func resetFinishedTimer(after delay: Duration, id: UUID) {
+        Task { [weak self] in
+            try? await Task.sleep(for: delay)
+            guard self?.runningTimer?.id == id, self?.runningTimer?.state == .finished else {
+                return
+            }
+            self?.stop()
         }
     }
 

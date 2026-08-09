@@ -88,6 +88,10 @@ final class PresetListModel: ObservableObject {
     }
 
     func start(preset: Preset, timer: TimerItem) {
+        guard runningTimer == nil else {
+            return
+        }
+
         runningTimer = RunningTimer(preset: preset, timer: timer, executionDevice: .iPhone)
         persistRunningTimer()
         scheduleNotification(for: timer)
@@ -145,8 +149,24 @@ final class PresetListModel: ObservableObject {
             return
         }
 
-        runningTimer = timerEngine.refresh(current)
+        let refreshed = timerEngine.refresh(current)
+        let didFinish = current.state != .finished && refreshed.state == .finished
+        runningTimer = refreshed
         persistRunningTimer()
+
+        if didFinish {
+            resetFinishedTimer(after: .seconds(1), id: refreshed.id)
+        }
+    }
+
+    private func resetFinishedTimer(after delay: Duration, id: UUID) {
+        Task { [weak self] in
+            try? await Task.sleep(for: delay)
+            guard self?.runningTimer?.id == id, self?.runningTimer?.state == .finished else {
+                return
+            }
+            self?.stopTimer()
+        }
     }
 
     private func persistRunningTimer() {

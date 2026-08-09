@@ -20,7 +20,16 @@ Each timer inside a preset is independent. On Apple Watch, a preset opens to up 
 
 Timer buttons show only their duration. The MVP does not use labels such as short, normal, long, or maximum.
 
-The visual direction is black-first with a warm orange accent. The running screen shows remaining time inside a circular ring that drains as time passes on both iPhone and Apple Watch.
+The visual direction is black-first with a warm orange accent. Starting a timer does not open another screen. Its button changes into a circular remaining-time ring in the existing 2x2 grid on both iPhone and Apple Watch.
+
+The active ring uses the following interaction:
+
+- Tap a duration to start it.
+- Tap the running ring to pause.
+- Tap the paused ring to resume.
+- Only while paused, tap the red close button to stop and reset it.
+- The other three timers are disabled while one timer is active.
+- After completion feedback, the tile automatically returns to its original duration.
 
 ## MVP
 
@@ -33,8 +42,8 @@ iPhone:
 - 2x2 timer buttons.
 - One-tap start.
 - Remaining time.
-- Progress display.
-- Pause, resume, stop.
+- In-place circular progress ring.
+- Tap to pause or resume; stop control appears while paused.
 - Edit timer duration.
 - Local notification on finish.
 - Restore running timer.
@@ -49,7 +58,8 @@ Apple Watch:
 - 2x2 timer buttons.
 - One-tap start.
 - Remaining time.
-- Pause, resume, stop.
+- In-place circular progress ring.
+- Tap to pause or resume; stop control appears while paused.
 - Haptic feedback on finish.
 
 ## Device Roles
