@@ -32,11 +32,7 @@ struct TimerGridWatchView: View {
                     if let runningTimer {
                         RunningWatchTimerTile(timer: runningTimer)
                     } else {
-                        Text(timer.displayDuration)
-                            .font(.title3.bold())
-                            .foregroundStyle(.white)
-                            .minimumScaleFactor(0.7)
-                            .lineLimit(1)
+                        IdleWatchTimerTile(durationSeconds: timer.durationSeconds)
                     }
                 }
                 .frame(maxWidth: .infinity, minHeight: 70)
@@ -88,6 +84,30 @@ struct TimerGridWatchView: View {
         case .finished:
             break
         }
+    }
+}
+
+private struct IdleWatchTimerTile: View {
+    let durationSeconds: Int
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(Color.orange, lineWidth: 5)
+
+            Text(format(durationSeconds))
+                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .monospacedDigit()
+                .foregroundStyle(.white)
+                .minimumScaleFactor(0.55)
+                .lineLimit(1)
+                .padding(9)
+        }
+        .frame(width: 58, height: 58)
+    }
+
+    private func format(_ seconds: Int) -> String {
+        String(format: "%d:%02d", seconds / 60, seconds % 60)
     }
 }
 

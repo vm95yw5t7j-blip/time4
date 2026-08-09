@@ -20,7 +20,7 @@ Each timer inside a preset is independent. On Apple Watch, a preset opens to up 
 
 Timer buttons show only their duration. The MVP does not use labels such as short, normal, long, or maximum.
 
-The visual direction is black-first with a warm orange accent. Starting a timer does not open another screen. Its button changes into a circular remaining-time ring in the existing 2x2 grid on both iPhone and Apple Watch.
+The visual direction is black-first with a warm orange accent. All four timer tiles always appear as full orange rings with clock-style durations such as `1:00` and `1:30`. Starting a timer does not open another screen; the selected ring drains in place on both iPhone and Apple Watch.
 
 The active ring uses the following interaction:
 
