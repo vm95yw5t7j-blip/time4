@@ -1,3 +1,4 @@
+import Foundation
 import SwiftUI
 import Time4Shared
 
@@ -57,6 +58,7 @@ struct PresetEditorView: View {
                         model.update(preset)
                         dismiss()
                     }
+                    .disabled(preset.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
         }
@@ -101,14 +103,42 @@ private struct TimerEditorRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Stepper(value: $timer.durationSeconds, in: 1...35_999, step: 30) {
-                Text(timer.displayDuration)
-                    .font(.headline)
+            HStack {
+                Text("時間")
+                Spacer()
+                TextField("0", value: minutes, format: .number)
+                    .keyboardType(.numberPad)
+                    .multilineTextAlignment(.trailing)
+                    .frame(width: 48)
+                Text("分")
+                TextField("0", value: seconds, format: .number)
+                    .keyboardType(.numberPad)
+                    .multilineTextAlignment(.trailing)
+                    .frame(width: 40)
+                Text("秒")
             }
             Toggle("触覚通知", isOn: $timer.hapticEnabled)
             Toggle("通知音", isOn: $timer.soundEnabled)
         }
         .padding(.vertical, 4)
+    }
+
+    private var minutes: Binding<Int> {
+        Binding(
+            get: { timer.durationSeconds / 60 },
+            set: { newValue in
+                timer.durationSeconds = max(1, min(599, newValue) * 60 + timer.durationSeconds % 60)
+            }
+        )
+    }
+
+    private var seconds: Binding<Int> {
+        Binding(
+            get: { timer.durationSeconds % 60 },
+            set: { newValue in
+                timer.durationSeconds = max(1, (timer.durationSeconds / 60) * 60 + min(59, max(0, newValue)))
+            }
+        )
     }
 }
 

@@ -11,7 +11,7 @@ struct PresetListView: View {
                 Section {
                     ForEach(model.presets) { preset in
                         NavigationLink {
-                            TimerGridPhoneView(preset: preset)
+                            TimerGridPhoneView(presetID: preset.id)
                         } label: {
                             HStack(spacing: 12) {
                                 Image(systemName: preset.icon)
@@ -32,6 +32,14 @@ struct PresetListView: View {
                             } label: {
                                 Label("編集", systemImage: "pencil")
                             }
+                        }
+                        .swipeActions(edge: .leading) {
+                            Button {
+                                editingPreset = preset
+                            } label: {
+                                Label("編集", systemImage: "pencil")
+                            }
+                            .tint(.orange)
                         }
                     }
                     .onDelete(perform: model.delete)

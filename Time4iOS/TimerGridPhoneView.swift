@@ -3,31 +3,53 @@ import Time4Shared
 
 struct TimerGridPhoneView: View {
     @EnvironmentObject private var model: PresetListModel
-    let preset: Preset
+    @State private var editingPreset: Preset?
+
+    let presetID: UUID
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 2)
 
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: 12) {
-                ForEach(preset.timers) { timer in
-                    timerTile(for: timer)
+        Group {
+            if let preset = model.presets.first(where: { $0.id == presetID }) {
+                ScrollView {
+                    LazyVGrid(columns: columns, spacing: 12) {
+                        ForEach(preset.timers) { timer in
+                            timerTile(for: timer, preset: preset)
+                        }
+                    }
+                    .padding()
                 }
+                .background(Color.black.ignoresSafeArea())
+                .navigationTitle(preset.name)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            editingPreset = preset
+                        } label: {
+                            Image(systemName: "pencil")
+                        }
+                        .accessibilityLabel("プリセットを編集")
+                    }
+                }
+            } else {
+                ContentUnavailableView("プリセットがありません", systemImage: "timer")
             }
-            .padding()
         }
-        .background(Color.black.ignoresSafeArea())
-        .navigationTitle(preset.name)
-        .navigationBarTitleDisplayMode(.inline)
+        .sheet(item: $editingPreset) { preset in
+            PresetEditorView(preset: preset)
+                .environmentObject(model)
+        }
     }
 
     @ViewBuilder
-    private func timerTile(for timer: TimerItem) -> some View {
-        let runningTimer = activeTimer(for: timer)
+    private func timerTile(for timer: TimerItem, preset: Preset) -> some View {
+        let runningTimer = activeTimer(for: timer, preset: preset)
 
         ZStack(alignment: .topTrailing) {
             Button {
-                handleTap(timer: timer, runningTimer: runningTimer)
+                handleTap(timer: timer, preset: preset, runningTimer: runningTimer)
             } label: {
                 Group {
                     if let runningTimer {
@@ -66,13 +88,13 @@ struct TimerGridPhoneView: View {
         }
     }
 
-    private func activeTimer(for timer: TimerItem) -> RunningTimer? {
+    private func activeTimer(for timer: TimerItem, preset: Preset) -> RunningTimer? {
         model.runningTimers.first {
             $0.presetID == preset.id && $0.timerID == timer.id
         }
     }
 
-    private func handleTap(timer: TimerItem, runningTimer: RunningTimer?) {
+    private func handleTap(timer: TimerItem, preset: Preset, runningTimer: RunningTimer?) {
         guard let runningTimer else {
             model.start(preset: preset, timer: timer)
             return
