@@ -87,30 +87,51 @@ private struct TimerEditorRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .firstTextBaseline) {
-                Text("タイマー\(number)")
-                    .font(.headline)
+            Text("タイマー\(number)")
+                .font(.headline)
+
+            HStack(alignment: .center, spacing: 12) {
                 Spacer()
-                Text(formattedDuration)
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
-                    .monospacedDigit()
-                    .foregroundStyle(.orange)
-            }
 
-            Stepper(value: minutes, in: 0...599) {
-                LabeledContent("分") {
-                    Text("\(timer.durationSeconds / 60)")
-                        .font(.title3.bold())
+                VStack(spacing: 4) {
+                    TextField("0", value: minutes, format: .number)
+                        .keyboardType(.numberPad)
+                        .font(.system(size: 28, weight: .bold, design: .rounded))
                         .monospacedDigit()
+                        .multilineTextAlignment(.center)
+                        .frame(width: 92, height: 54)
+                        .background(Color(white: 0.12))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.orange, lineWidth: 2)
+                        }
+                    Text("分")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
-            }
 
-            Stepper(value: seconds, in: 0...59) {
-                LabeledContent("秒") {
-                    Text("\(timer.durationSeconds % 60)")
-                        .font(.title3.bold())
+                Text(":")
+                    .font(.title.bold())
+                    .padding(.bottom, 20)
+
+                VStack(spacing: 4) {
+                    TextField("00", value: seconds, format: .number)
+                        .keyboardType(.numberPad)
+                        .font(.system(size: 28, weight: .bold, design: .rounded))
                         .monospacedDigit()
+                        .multilineTextAlignment(.center)
+                        .frame(width: 92, height: 54)
+                        .background(Color(white: 0.12))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.orange, lineWidth: 2)
+                        }
+                    Text("秒")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
+
+                Spacer()
             }
 
             Divider()
@@ -118,10 +139,6 @@ private struct TimerEditorRow: View {
             Toggle("通知音", isOn: $timer.soundEnabled)
         }
         .padding(.vertical, 8)
-    }
-
-    private var formattedDuration: String {
-        String(format: "%d:%02d", timer.durationSeconds / 60, timer.durationSeconds % 60)
     }
 
     private var minutes: Binding<Int> {
