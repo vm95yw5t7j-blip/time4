@@ -12,6 +12,8 @@ Time4 is a simple preset timer app for iPhone and Apple Watch. It is Apple Watch
 
 Positioning: `iPhoneでも使える、Apple Watchファーストのプリセットタイマー。`
 
+The Pro purchase is a one-time `500円` purchase. Japanese UI displays prices using the `500円` style rather than a dollar amount or symbol-only price.
+
 ## Core Decision
 
 The MVP is not a sequence timer.

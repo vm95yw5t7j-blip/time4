@@ -30,7 +30,7 @@ struct ProPaywallView: View {
                         }
                     }
                 } label: {
-                    Text(purchaseManager.product.map { "購入する \($0.displayPrice)" } ?? "購入する")
+                    Text("\(purchaseManager.japanesePriceText)で購入する")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)

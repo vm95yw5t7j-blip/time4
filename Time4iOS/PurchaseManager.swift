@@ -9,6 +9,19 @@ final class PurchaseManager: ObservableObject {
     @Published private(set) var isLoading = false
     @Published var errorMessage: String?
 
+    var japanesePriceText: String {
+        guard let product else {
+            return "500円"
+        }
+
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.locale = Locale(identifier: "ja_JP")
+        formatter.maximumFractionDigits = 2
+        let amount = formatter.string(from: NSDecimalNumber(decimal: product.price)) ?? "500"
+        return "\(amount)円"
+    }
+
     func load() async {
         isLoading = true
         defer { isLoading = false }
