@@ -18,8 +18,9 @@ struct PresetEditorView: View {
                 Section("プリセット") {
                     TextField("名前", text: $preset.name)
                     Picker("アイコン", selection: $preset.icon) {
-                        ForEach(iconChoices, id: \.self) { icon in
-                            Label(icon, systemImage: icon).tag(icon)
+                        ForEach(iconChoices) { choice in
+                            Label(choice.name, systemImage: choice.symbol)
+                                .tag(choice.symbol)
                         }
                     }
                 }
@@ -29,18 +30,12 @@ struct PresetEditorView: View {
                 }
 
                 Section("タイマー") {
-                    ForEach($preset.timers) { $timer in
-                        TimerEditorRow(timer: $timer)
+                    ForEach(Array(preset.timers.indices), id: \.self) { index in
+                        TimerEditorRow(
+                            number: index + 1,
+                            timer: $preset.timers[index]
+                        )
                     }
-                    .onMove(perform: moveTimer)
-                    .onDelete(perform: deleteTimer)
-
-                    Button {
-                        addTimer()
-                    } label: {
-                        Label("タイマーを追加", systemImage: "plus")
-                    }
-                    .disabled(preset.timers.count >= Time4Policy.maxTimersPerPreset)
                 }
             }
             .navigationTitle("編集")
@@ -64,31 +59,16 @@ struct PresetEditorView: View {
         }
     }
 
-    private var iconChoices: [String] {
-        ["timer", "figure.strengthtraining.traditional", "fork.knife", "cup.and.saucer", "book", "hammer", "figure.cooldown"]
-    }
-
-    private func addTimer() {
-        guard preset.timers.count < Time4Policy.maxTimersPerPreset else {
-            return
-        }
-
-        preset.timers.append(
-            TimerItem(
-                durationSeconds: 60,
-                sortOrder: preset.timers.count
-            )
-        )
-    }
-
-    private func deleteTimer(at offsets: IndexSet) {
-        preset.timers.remove(atOffsets: offsets)
-        normalizeTimerOrder()
-    }
-
-    private func moveTimer(from source: IndexSet, to destination: Int) {
-        preset.timers.move(fromOffsets: source, toOffset: destination)
-        normalizeTimerOrder()
+    private var iconChoices: [IconChoice] {
+        [
+            IconChoice(symbol: "timer", name: "タイマー"),
+            IconChoice(symbol: "figure.strengthtraining.traditional", name: "筋トレ"),
+            IconChoice(symbol: "fork.knife", name: "料理"),
+            IconChoice(symbol: "cup.and.saucer", name: "コーヒー"),
+            IconChoice(symbol: "book", name: "勉強"),
+            IconChoice(symbol: "hammer", name: "作業"),
+            IconChoice(symbol: "figure.cooldown", name: "ストレッチ")
+        ]
     }
 
     private func normalizeTimerOrder() {
@@ -98,11 +78,21 @@ struct PresetEditorView: View {
     }
 }
 
+private struct IconChoice: Identifiable {
+    let symbol: String
+    let name: String
+
+    var id: String { symbol }
+}
+
 private struct TimerEditorRow: View {
+    let number: Int
     @Binding var timer: TimerItem
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            Text("タイマー\(number)")
+                .font(.headline)
             HStack {
                 Text("時間")
                 Spacer()
