@@ -25,11 +25,7 @@ struct PresetEditorView: View {
                     }
                 }
 
-                Section("Apple Watch表示") {
-                    WatchPreviewGrid(timers: preset.timers)
-                }
-
-                Section("タイマー") {
+                Section("タイマーの時間") {
                     ForEach(Array(preset.timers.indices), id: \.self) { index in
                         TimerEditorRow(
                             number: index + 1,
@@ -90,27 +86,42 @@ private struct TimerEditorRow: View {
     @Binding var timer: TimerItem
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("タイマー\(number)")
-                .font(.headline)
-            HStack {
-                Text("時間")
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("タイマー\(number)")
+                    .font(.headline)
                 Spacer()
-                TextField("0", value: minutes, format: .number)
-                    .keyboardType(.numberPad)
-                    .multilineTextAlignment(.trailing)
-                    .frame(width: 48)
-                Text("分")
-                TextField("0", value: seconds, format: .number)
-                    .keyboardType(.numberPad)
-                    .multilineTextAlignment(.trailing)
-                    .frame(width: 40)
-                Text("秒")
+                Text(formattedDuration)
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundStyle(.orange)
             }
+
+            Stepper(value: minutes, in: 0...599) {
+                LabeledContent("分") {
+                    Text("\(timer.durationSeconds / 60)")
+                        .font(.title3.bold())
+                        .monospacedDigit()
+                }
+            }
+
+            Stepper(value: seconds, in: 0...59) {
+                LabeledContent("秒") {
+                    Text("\(timer.durationSeconds % 60)")
+                        .font(.title3.bold())
+                        .monospacedDigit()
+                }
+            }
+
+            Divider()
             Toggle("触覚通知", isOn: $timer.hapticEnabled)
             Toggle("通知音", isOn: $timer.soundEnabled)
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 8)
+    }
+
+    private var formattedDuration: String {
+        String(format: "%d:%02d", timer.durationSeconds / 60, timer.durationSeconds % 60)
     }
 
     private var minutes: Binding<Int> {
@@ -129,27 +140,5 @@ private struct TimerEditorRow: View {
                 timer.durationSeconds = max(1, (timer.durationSeconds / 60) * 60 + min(59, max(0, newValue)))
             }
         )
-    }
-}
-
-private struct WatchPreviewGrid: View {
-    let timers: [TimerItem]
-
-    var body: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 2), spacing: 8) {
-            ForEach(timers) { timer in
-                VStack(spacing: 4) {
-                    Text(timer.displayDuration)
-                        .font(.headline)
-                }
-                .frame(maxWidth: .infinity, minHeight: 64)
-                .background(Color(white: 0.12))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.white.opacity(0.12), lineWidth: 1)
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-            }
-        }
     }
 }
