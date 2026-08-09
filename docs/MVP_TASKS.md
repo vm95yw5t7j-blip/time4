@@ -8,12 +8,14 @@
 - iPhone preset list and editor.
 - iPhone 2x2 timer selection.
 - iPhone one-tap timer start.
-- iPhone running timer screen with progress, pause, resume, and stop.
+- iPhone in-grid timer rings with pause, resume, and stop.
+- Up to four simultaneous iPhone timers.
 - iPhone local notification scheduling.
 - iPhone running timer persistence.
 - Watch preset list.
 - Watch 2x2 timer selection.
-- Watch running timer screen.
+- Watch in-grid timer rings with pause, resume, and stop.
+- Up to four simultaneous Watch timers.
 - WatchConnectivity snapshot codec and controllers.
 - StoreKit product ID placeholder.
 - Running timer execution device field.
@@ -33,7 +35,6 @@
 ## Not In MVP
 
 - Sequence timer.
-- Multiple simultaneous timers.
 - Full realtime running timer sync between iPhone and Apple Watch.
 - Normal number-input timer.
 - Live Activity.

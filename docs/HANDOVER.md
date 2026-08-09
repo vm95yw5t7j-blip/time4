@@ -28,7 +28,7 @@ The active ring uses the following interaction:
 - Tap the running ring to pause.
 - Tap the paused ring to resume.
 - Only while paused, tap the red close button to stop and reset it.
-- The other three timers are disabled while one timer is active.
+- Each of the four tiles can run independently and simultaneously.
 - After completion feedback, the tile automatically returns to its original duration.
 
 ## MVP
@@ -44,6 +44,7 @@ iPhone:
 - Remaining time.
 - In-place circular progress ring.
 - Tap to pause or resume; stop control appears while paused.
+- Up to four simultaneous timers.
 - Edit timer duration.
 - Local notification on finish.
 - Restore running timer.
@@ -60,6 +61,7 @@ Apple Watch:
 - Remaining time.
 - In-place circular progress ring.
 - Tap to pause or resume; stop control appears while paused.
+- Up to four simultaneous timers.
 - Haptic feedback on finish.
 
 ## Device Roles
@@ -91,7 +93,6 @@ Future versions may add realtime shared running timer control.
 ## Deferred
 
 - Sequence timer.
-- Multiple simultaneous timers.
 - Folders.
 - Sharing.
 - User accounts.

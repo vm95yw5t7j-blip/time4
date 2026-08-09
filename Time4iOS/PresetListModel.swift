@@ -8,7 +8,7 @@ final class PresetListModel: ObservableObject {
     @Published var presets: [Preset]
     @Published var isProUnlocked: Bool
     @Published var showingPaywall = false
-    @Published var runningTimer: RunningTimer?
+    @Published var runningTimers: [RunningTimer]
 
     private let store = SnapshotStore()
     private let sync = WatchSyncController()
@@ -19,7 +19,7 @@ final class PresetListModel: ObservableObject {
     init() {
         presets = store.snapshot.presets
         isProUnlocked = store.snapshot.isProUnlocked
-        runningTimer = Self.loadRunningTimer(key: runningKey)
+        runningTimers = Self.loadRunningTimers(key: runningKey)
         sync.start()
         sync.send(store.snapshot)
         requestNotificationPermission()
@@ -88,37 +88,41 @@ final class PresetListModel: ObservableObject {
     }
 
     func start(preset: Preset, timer: TimerItem) {
-        guard runningTimer == nil else {
+        guard
+            runningTimers.count < Time4Policy.maxTimersPerPreset,
+            !runningTimers.contains(where: { $0.timerID == timer.id })
+        else {
             return
         }
 
-        runningTimer = RunningTimer(preset: preset, timer: timer, executionDevice: .iPhone)
-        persistRunningTimer()
-        scheduleNotification(for: timer)
+        let runningTimer = RunningTimer(preset: preset, timer: timer, executionDevice: .iPhone)
+        runningTimers.append(runningTimer)
+        persistRunningTimers()
+        scheduleNotification(for: runningTimer)
     }
 
-    func pause() {
-        guard let runningTimer else {
+    func pause(timerID: UUID) {
+        guard let index = runningTimers.firstIndex(where: { $0.timerID == timerID }) else {
             return
         }
-        self.runningTimer = timerEngine.pause(runningTimer)
-        persistRunningTimer()
-        cancelTimerNotification()
+        runningTimers[index] = timerEngine.pause(runningTimers[index])
+        persistRunningTimers()
+        cancelTimerNotification(timerID: timerID)
     }
 
-    func resume() {
-        guard let runningTimer else {
+    func resume(timerID: UUID) {
+        guard let index = runningTimers.firstIndex(where: { $0.timerID == timerID }) else {
             return
         }
-        self.runningTimer = timerEngine.resume(runningTimer)
-        persistRunningTimer()
-        rescheduleNotificationFromRunningTimer()
+        runningTimers[index] = timerEngine.resume(runningTimers[index])
+        persistRunningTimers()
+        scheduleNotification(for: runningTimers[index])
     }
 
-    func stopTimer() {
-        runningTimer = nil
-        UserDefaults.standard.removeObject(forKey: runningKey)
-        cancelTimerNotification()
+    func stopTimer(timerID: UUID) {
+        runningTimers.removeAll(where: { $0.timerID == timerID })
+        persistRunningTimers()
+        cancelTimerNotification(timerID: timerID)
     }
 
     private func normalizeSortOrder() {
@@ -145,36 +149,38 @@ final class PresetListModel: ObservableObject {
     }
 
     private func refreshTimer() {
-        guard let current = runningTimer else {
+        guard !runningTimers.isEmpty else {
             return
         }
 
-        let refreshed = timerEngine.refresh(current)
-        let didFinish = current.state != .finished && refreshed.state == .finished
-        runningTimer = refreshed
-        persistRunningTimer()
+        var finishedTimerIDs: [UUID] = []
+        for index in runningTimers.indices {
+            let current = runningTimers[index]
+            let refreshed = timerEngine.refresh(current)
+            runningTimers[index] = refreshed
+            if current.state != .finished && refreshed.state == .finished {
+                finishedTimerIDs.append(refreshed.timerID)
+            }
+        }
+        persistRunningTimers()
 
-        if didFinish {
-            resetFinishedTimer(after: .seconds(1), timerID: refreshed.timerID)
+        for timerID in finishedTimerIDs {
+            resetFinishedTimer(after: .seconds(1), timerID: timerID)
         }
     }
 
     private func resetFinishedTimer(after delay: Duration, timerID: UUID) {
         Task { [weak self] in
             try? await Task.sleep(for: delay)
-            guard self?.runningTimer?.timerID == timerID, self?.runningTimer?.state == .finished else {
+            guard self?.runningTimers.first(where: { $0.timerID == timerID })?.state == .finished else {
                 return
             }
-            self?.stopTimer()
+            self?.stopTimer(timerID: timerID)
         }
     }
 
-    private func persistRunningTimer() {
-        guard let runningTimer else {
-            return
-        }
-
-        if let data = try? JSONEncoder.time4iOS.encode(runningTimer) {
+    private func persistRunningTimers() {
+        if let data = try? JSONEncoder.time4iOS.encode(runningTimers) {
             UserDefaults.standard.set(data, forKey: runningKey)
         }
     }
@@ -183,59 +189,57 @@ final class PresetListModel: ObservableObject {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
     }
 
-    private func scheduleNotification(for timer: TimerItem) {
-        guard timer.soundEnabled || timer.hapticEnabled else {
-            return
-        }
-
-        cancelTimerNotification()
-
-        let content = UNMutableNotificationContent()
-        content.title = "Time4"
-        content.body = "タイマーが終了しました"
-        content.sound = timer.soundEnabled ? .default : nil
-
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(timer.durationSeconds), repeats: false)
-        let request = UNNotificationRequest(identifier: Self.notificationID, content: content, trigger: trigger)
-        UNUserNotificationCenter.current().add(request)
-    }
-
-    private func rescheduleNotificationFromRunningTimer() {
-        cancelTimerNotification()
+    private func scheduleNotification(for runningTimer: RunningTimer) {
         guard
-            let runningTimer,
             runningTimer.state == .running,
             runningTimer.soundEnabled || runningTimer.hapticEnabled
         else {
             return
         }
 
-        let seconds = max(1, runningTimer.remainingSeconds())
+        cancelTimerNotification(timerID: runningTimer.timerID)
+
         let content = UNMutableNotificationContent()
         content.title = "Time4"
         content.body = "\(runningTimer.presetName)のタイマーが終了しました"
         content.sound = runningTimer.soundEnabled ? .default : nil
 
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(seconds), repeats: false)
-        let request = UNNotificationRequest(identifier: Self.notificationID, content: content, trigger: trigger)
+        let trigger = UNTimeIntervalNotificationTrigger(
+            timeInterval: TimeInterval(max(1, runningTimer.remainingSeconds())),
+            repeats: false
+        )
+        let request = UNNotificationRequest(
+            identifier: notificationID(for: runningTimer.timerID),
+            content: content,
+            trigger: trigger
+        )
         UNUserNotificationCenter.current().add(request)
     }
 
-    private func cancelTimerNotification() {
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [Self.notificationID])
+    private func cancelTimerNotification(timerID: UUID) {
+        UNUserNotificationCenter.current().removePendingNotificationRequests(
+            withIdentifiers: [notificationID(for: timerID)]
+        )
     }
 
-    private static let notificationID = "time4.iphone.timer.finished"
+    private func notificationID(for timerID: UUID) -> String {
+        "\(Self.notificationIDPrefix).\(timerID.uuidString)"
+    }
 
-    private static func loadRunningTimer(key: String) -> RunningTimer? {
-        guard
-            let data = UserDefaults.standard.data(forKey: key),
-            let decoded = try? JSONDecoder.time4iOS.decode(RunningTimer.self, from: data)
-        else {
-            return nil
+    private static let notificationIDPrefix = "time4.iphone.timer.finished"
+
+    private static func loadRunningTimers(key: String) -> [RunningTimer] {
+        guard let data = UserDefaults.standard.data(forKey: key) else {
+            return []
         }
 
-        return TimerEngine().refresh(decoded)
+        let decoder = JSONDecoder.time4iOS
+        let decoded = (try? decoder.decode([RunningTimer].self, from: data))
+            ?? (try? decoder.decode(RunningTimer.self, from: data)).map { [$0] }
+            ?? []
+
+        let engine = TimerEngine()
+        return decoded.map { engine.refresh($0) }.filter { $0.state != .finished }
     }
 }
 
