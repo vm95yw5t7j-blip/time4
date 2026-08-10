@@ -14,12 +14,17 @@ final class PurchaseManager: ObservableObject {
             return "500円"
         }
 
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.locale = Locale(identifier: "ja_JP")
-        formatter.maximumFractionDigits = 2
-        let amount = formatter.string(from: NSDecimalNumber(decimal: product.price)) ?? "500"
-        return "\(amount)円"
+        let displayPrice = product.displayPrice.trimmingCharacters(in: .whitespacesAndNewlines)
+        if displayPrice.hasSuffix("円") {
+            return displayPrice
+        }
+
+        if displayPrice.hasPrefix("¥") || displayPrice.hasPrefix("￥") {
+            let amount = String(displayPrice.dropFirst())
+            return amount == "0" ? "500円" : "\(amount)円"
+        }
+
+        return displayPrice
     }
 
     func load() async {

@@ -141,17 +141,19 @@ private struct TimerEditorRow: View {
             }
 
             HStack(spacing: 8) {
-                Label("触覚", systemImage: "iphone.radiowaves.left.and.right")
-                    .font(.subheadline)
-                Toggle("触覚", isOn: $timer.hapticEnabled)
-                    .labelsHidden()
+                Toggle(isOn: $timer.hapticEnabled) {
+                    Image(systemName: "iphone.radiowaves.left.and.right")
+                        .frame(width: 24)
+                }
+                .accessibilityLabel("触覚通知")
 
                 Spacer()
 
-                Label("音", systemImage: "speaker.wave.2")
-                    .font(.subheadline)
-                Toggle("音", isOn: $timer.soundEnabled)
-                    .labelsHidden()
+                Toggle(isOn: $timer.soundEnabled) {
+                    Image(systemName: "speaker.wave.2")
+                        .frame(width: 24)
+                }
+                .accessibilityLabel("通知音")
             }
         }
         .padding(.vertical, 4)
