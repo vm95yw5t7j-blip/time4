@@ -17,9 +17,10 @@ final class PresetListModel: ObservableObject {
     private var tickTask: Task<Void, Never>?
 
     init() {
-        presets = store.snapshot.presets
+        presets = store.snapshot.presets.map(Self.expandingPhoneTimers)
         isProUnlocked = store.snapshot.isProUnlocked
         runningTimers = Self.loadRunningTimers(key: runningKey)
+        store.save(presets: presets, isProUnlocked: isProUnlocked)
         sync.start()
         sync.send(store.snapshot)
         requestNotificationPermission()
@@ -46,7 +47,11 @@ final class PresetListModel: ObservableObject {
                     TimerItem(durationSeconds: 60, sortOrder: 0),
                     TimerItem(durationSeconds: 180, sortOrder: 1),
                     TimerItem(durationSeconds: 300, sortOrder: 2),
-                    TimerItem(durationSeconds: 600, sortOrder: 3)
+                    TimerItem(durationSeconds: 600, sortOrder: 3),
+                    TimerItem(durationSeconds: 900, sortOrder: 4),
+                    TimerItem(durationSeconds: 1_200, sortOrder: 5),
+                    TimerItem(durationSeconds: 1_800, sortOrder: 6),
+                    TimerItem(durationSeconds: 3_600, sortOrder: 7)
                 ]
             )
         )
@@ -231,6 +236,23 @@ final class PresetListModel: ObservableObject {
     }
 
     private static let notificationIDPrefix = "time4.iphone.timer.finished"
+
+    private static func expandingPhoneTimers(_ preset: Preset) -> Preset {
+        guard preset.timers.count < Time4Policy.maxTimersPerPreset else {
+            return preset
+        }
+
+        var expanded = preset
+        let defaultDurations = [60, 90, 120, 180, 300, 600, 900, 1_800]
+        while expanded.timers.count < Time4Policy.maxTimersPerPreset {
+            let duration = defaultDurations[expanded.timers.count]
+            expanded.timers.append(
+                TimerItem(durationSeconds: duration, sortOrder: expanded.timers.count)
+            )
+        }
+        expanded.updatedAt = .now
+        return expanded
+    }
 
     private static func loadRunningTimers(key: String) -> [RunningTimer] {
         guard let data = UserDefaults.standard.data(forKey: key) else {

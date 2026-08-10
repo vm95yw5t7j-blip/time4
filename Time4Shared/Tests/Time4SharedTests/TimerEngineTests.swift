@@ -23,12 +23,12 @@ final class TimerEngineTests: XCTestCase {
         XCTAssertEqual(resumed.remainingSeconds(now: start.addingTimeInterval(200)), 180)
     }
 
-    func testPresetKeepsAtMostFourTimers() {
+    func testPresetKeepsAtMostEightTimers() {
         let preset = Preset(
             name: "テスト",
-            timers: (0..<6).map { TimerItem(durationSeconds: 60 + $0, sortOrder: $0) }
+            timers: (0..<10).map { TimerItem(durationSeconds: 60 + $0, sortOrder: $0) }
         )
 
-        XCTAssertEqual(preset.timers.count, 4)
+        XCTAssertEqual(preset.timers.count, 8)
     }
 }

@@ -13,20 +13,24 @@ struct PresetListView: View {
                     NavigationLink {
                         TimerGridPhoneView(presetID: preset.id)
                     } label: {
-                        HStack(spacing: 12) {
+                        HStack(spacing: 14) {
                             Image(systemName: preset.icon)
-                                .frame(width: 28, height: 28)
+                                .font(.title2)
+                                .frame(width: 42, height: 42)
                                 .foregroundStyle(.orange)
-                            VStack(alignment: .leading, spacing: 3) {
+                            VStack(alignment: .leading, spacing: 5) {
                                 Text(preset.name)
-                                    .font(.headline)
+                                    .font(.title3.weight(.semibold))
                                 Text(preset.timers.map(\.displayDuration).joined(separator: " / "))
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
+                                    .lineLimit(2)
+                                    .fixedSize(horizontal: false, vertical: true)
                             }
                         }
+                        .frame(minHeight: 68)
                     }
-                    .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                    .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
                     .contextMenu {
                         Button {
                             editingPreset = preset

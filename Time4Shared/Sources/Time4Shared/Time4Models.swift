@@ -24,11 +24,11 @@ public struct Preset: Identifiable, Codable, Equatable, Sendable {
         self.sortOrder = sortOrder
         self.createdAt = createdAt
         self.updatedAt = updatedAt
-        self.timers = Array(timers.sorted().prefix(4))
+        self.timers = Array(timers.sorted().prefix(Time4Policy.maxTimersPerPreset))
     }
 
     public mutating func replaceTimers(_ nextTimers: [TimerItem]) {
-        timers = Array(nextTimers.sorted().prefix(4))
+        timers = Array(nextTimers.sorted().prefix(Time4Policy.maxTimersPerPreset))
         updatedAt = .now
     }
 }

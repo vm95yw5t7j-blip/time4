@@ -8,7 +8,7 @@ Concept: `いつもの時間を、ワンタップで。`
 
 - iPhone app for preset setup, editing, and timer use.
 - Apple Watch app for faster preset selection and one-tap timer start.
-- Each preset has up to 4 independent timers.
+- Each preset has up to 8 independent timers on iPhone. Apple Watch shows the first 4 for faster operation.
 - Free plan allows 1 preset.
 - Pro is planned as a one-time purchase: `time4.pro.lifetime`.
 - Timer state is based on `endsAt`, not view tick counts.
@@ -30,7 +30,7 @@ App Store description draft:
 
 Time4は、いつも使う時間をワンタップで始められるプリセットタイマーです。
 
-用途ごとにプリセットを作り、その中に最大4つの時間を登録できます。
+用途ごとにプリセットを作り、その中にiPhoneでは最大8つの時間を登録できます。Apple Watchには先頭4つを表示します。
 
 筋トレ、料理、仕事、勉強など、毎回同じ時間を入力する必要はありません。
 

@@ -10,7 +10,7 @@ struct TimerGridWatchView: View {
     var body: some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 6) {
-                ForEach(preset.timers) { timer in
+                ForEach(Array(preset.timers.prefix(Time4Policy.watchTimersPerPreset))) { timer in
                     timerTile(for: timer)
                 }
             }
