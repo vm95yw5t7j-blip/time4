@@ -38,17 +38,23 @@ struct PresetEditorView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("キャンセル") {
+                    Button {
                         dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
                     }
+                    .accessibilityLabel("キャンセル")
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("保存") {
+                    Button {
                         normalizeTimerOrder()
                         preset.updatedAt = .now
                         model.update(preset)
                         dismiss()
+                    } label: {
+                        Image(systemName: "checkmark")
                     }
+                    .accessibilityLabel("保存")
                     .disabled(preset.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
@@ -86,20 +92,20 @@ private struct TimerEditorRow: View {
     @Binding var timer: TimerItem
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("タイマー\(number)")
                 .font(.headline)
 
-            HStack(alignment: .center, spacing: 12) {
+            HStack(alignment: .center, spacing: 8) {
                 Spacer()
 
                 VStack(spacing: 4) {
                     TextField("0", value: minutes, format: .number)
                         .keyboardType(.numberPad)
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
                         .monospacedDigit()
                         .multilineTextAlignment(.center)
-                        .frame(width: 92, height: 54)
+                        .frame(width: 72, height: 42)
                         .background(Color(white: 0.12))
                         .overlay {
                             RoundedRectangle(cornerRadius: 8)
@@ -111,16 +117,16 @@ private struct TimerEditorRow: View {
                 }
 
                 Text(":")
-                    .font(.title.bold())
-                    .padding(.bottom, 20)
+                    .font(.title3.bold())
+                    .padding(.bottom, 18)
 
                 VStack(spacing: 4) {
                     TextField("00", value: seconds, format: .number)
                         .keyboardType(.numberPad)
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
                         .monospacedDigit()
                         .multilineTextAlignment(.center)
-                        .frame(width: 92, height: 54)
+                        .frame(width: 72, height: 42)
                         .background(Color(white: 0.12))
                         .overlay {
                             RoundedRectangle(cornerRadius: 8)
@@ -134,11 +140,21 @@ private struct TimerEditorRow: View {
                 Spacer()
             }
 
-            Divider()
-            Toggle("触覚通知", isOn: $timer.hapticEnabled)
-            Toggle("通知音", isOn: $timer.soundEnabled)
+            HStack(spacing: 8) {
+                Label("触覚", systemImage: "iphone.radiowaves.left.and.right")
+                    .font(.subheadline)
+                Toggle("触覚", isOn: $timer.hapticEnabled)
+                    .labelsHidden()
+
+                Spacer()
+
+                Label("音", systemImage: "speaker.wave.2")
+                    .font(.subheadline)
+                Toggle("音", isOn: $timer.soundEnabled)
+                    .labelsHidden()
+            }
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, 4)
     }
 
     private var minutes: Binding<Int> {
