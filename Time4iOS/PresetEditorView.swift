@@ -34,6 +34,8 @@ struct PresetEditorView: View {
                     }
                 }
             }
+            .contentMargins(.top, 6, for: .scrollContent)
+            .listSectionSpacing(12)
             .navigationTitle("編集")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -92,71 +94,62 @@ private struct TimerEditorRow: View {
     @Binding var timer: TimerItem
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 6) {
             Text("タイマー\(number)")
-                .font(.headline)
+                .font(.subheadline.weight(.semibold))
 
-            HStack(alignment: .center, spacing: 8) {
-                Spacer()
-
-                VStack(spacing: 4) {
-                    TextField("0", value: minutes, format: .number)
-                        .keyboardType(.numberPad)
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
-                        .monospacedDigit()
-                        .multilineTextAlignment(.center)
-                        .frame(width: 72, height: 42)
-                        .background(Color(white: 0.12))
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.orange, lineWidth: 2)
-                        }
-                    Text("分")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-
-                Text(":")
-                    .font(.title3.bold())
-                    .padding(.bottom, 18)
-
-                VStack(spacing: 4) {
-                    TextField("00", value: seconds, format: .number)
-                        .keyboardType(.numberPad)
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
-                        .monospacedDigit()
-                        .multilineTextAlignment(.center)
-                        .frame(width: 72, height: 42)
-                        .background(Color(white: 0.12))
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.orange, lineWidth: 2)
-                        }
-                    Text("秒")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-
-                Spacer()
+            HStack(spacing: 7) {
+                timeField(value: minutes, placeholder: "0")
+                Text("分")
+                timeField(value: seconds, placeholder: "00")
+                Text("秒")
             }
+            .font(.caption)
+            .foregroundStyle(.secondary)
 
-            HStack(spacing: 8) {
+            HStack(spacing: 10) {
                 Toggle(isOn: $timer.hapticEnabled) {
-                    Image(systemName: "iphone.radiowaves.left.and.right")
-                        .frame(width: 24)
+                    Label("振動", systemImage: "iphone.radiowaves.left.and.right")
                 }
-                .accessibilityLabel("触覚通知")
+                .font(.caption)
 
                 Spacer()
 
                 Toggle(isOn: $timer.soundEnabled) {
-                    Image(systemName: "speaker.wave.2")
-                        .frame(width: 24)
+                    Label("音", systemImage: "speaker.wave.2")
                 }
-                .accessibilityLabel("通知音")
+                .font(.caption)
+
+                Button {
+                    TimerFeedbackPlayer.play(
+                        soundEnabled: timer.soundEnabled,
+                        hapticEnabled: timer.hapticEnabled
+                    )
+                } label: {
+                    Image(systemName: "play.circle.fill")
+                        .font(.title3)
+                }
+                .buttonStyle(.plain)
+                .disabled(!timer.soundEnabled && !timer.hapticEnabled)
+                .accessibilityLabel("音と振動を確認")
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 2)
+    }
+
+    private func timeField(value: Binding<Int>, placeholder: String) -> some View {
+        TextField(placeholder, value: value, format: .number)
+            .keyboardType(.numberPad)
+            .font(.system(size: 20, weight: .bold, design: .rounded))
+            .monospacedDigit()
+            .multilineTextAlignment(.center)
+            .foregroundStyle(.primary)
+            .frame(width: 62, height: 36)
+            .background(Color(white: 0.12))
+            .overlay {
+                RoundedRectangle(cornerRadius: 7)
+                    .stroke(Color.orange, lineWidth: 2)
+            }
     }
 
     private var minutes: Binding<Int> {

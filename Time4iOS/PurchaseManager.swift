@@ -15,6 +15,9 @@ final class PurchaseManager: ObservableObject {
         }
 
         let displayPrice = product.displayPrice.trimmingCharacters(in: .whitespacesAndNewlines)
+        if product.price == 0 || displayPrice.contains("0.00") {
+            return "500円"
+        }
         if displayPrice.hasSuffix("円") {
             return displayPrice
         }
@@ -24,7 +27,7 @@ final class PurchaseManager: ObservableObject {
             return amount == "0" ? "500円" : "\(amount)円"
         }
 
-        return displayPrice
+        return displayPrice.contains("$") ? "500円" : displayPrice
     }
 
     func load() async {

@@ -26,6 +26,7 @@ struct PresetListView: View {
                             }
                         }
                     }
+                    .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
                     .contextMenu {
                         Button {
                             editingPreset = preset
@@ -46,6 +47,7 @@ struct PresetListView: View {
                 .onMove(perform: model.move)
             }
             .environment(\.editMode, $editMode)
+            .contentMargins(.top, 4, for: .scrollContent)
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
             .background(Color.black)

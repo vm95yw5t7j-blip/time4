@@ -99,9 +99,10 @@ final class WatchTimerModel: NSObject, ObservableObject {
         persistRunningTimers()
 
         for timer in finishedTimers {
-            if timer.hapticEnabled {
-                WKInterfaceDevice.current().play(.notification)
-            }
+            WatchFeedbackPlayer.shared.play(
+                soundEnabled: timer.soundEnabled,
+                hapticEnabled: timer.hapticEnabled
+            )
             resetFinishedTimer(after: .seconds(1), timerID: timer.timerID)
         }
     }

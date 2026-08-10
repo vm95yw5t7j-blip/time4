@@ -18,7 +18,8 @@ struct TimerGridPhoneView: View {
                             timerTile(for: timer, preset: preset)
                         }
                     }
-                    .padding()
+                    .padding(.horizontal, 12)
+                    .padding(.top, 8)
                 }
                 .background(Color.black.ignoresSafeArea())
                 .navigationTitle(preset.name)
@@ -59,7 +60,7 @@ struct TimerGridPhoneView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .frame(height: 142)
+                .frame(height: 164)
                 .background(Color(white: 0.12))
                 .overlay {
                     RoundedRectangle(cornerRadius: 8)
@@ -127,7 +128,7 @@ private struct IdleTimerTile: View {
                 .lineLimit(1)
                 .padding(18)
         }
-        .frame(width: 112, height: 112)
+        .frame(width: 128, height: 128)
     }
 
     private func format(_ seconds: Int) -> String {
@@ -167,7 +168,7 @@ private struct RunningTimerTile: View {
                 .padding(18)
                 .contentTransition(.numericText())
         }
-        .frame(width: 112, height: 112)
+        .frame(width: 128, height: 128)
     }
 
     private func remainingFraction(now: Date) -> CGFloat {

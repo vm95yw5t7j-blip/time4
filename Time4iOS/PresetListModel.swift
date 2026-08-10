@@ -153,19 +153,23 @@ final class PresetListModel: ObservableObject {
             return
         }
 
-        var finishedTimerIDs: [UUID] = []
+        var finishedTimers: [RunningTimer] = []
         for index in runningTimers.indices {
             let current = runningTimers[index]
             let refreshed = timerEngine.refresh(current)
             runningTimers[index] = refreshed
             if current.state != .finished && refreshed.state == .finished {
-                finishedTimerIDs.append(refreshed.timerID)
+                finishedTimers.append(refreshed)
             }
         }
         persistRunningTimers()
 
-        for timerID in finishedTimerIDs {
-            resetFinishedTimer(after: .seconds(1), timerID: timerID)
+        for timer in finishedTimers {
+            TimerFeedbackPlayer.play(
+                soundEnabled: timer.soundEnabled,
+                hapticEnabled: timer.hapticEnabled
+            )
+            resetFinishedTimer(after: .seconds(1), timerID: timer.timerID)
         }
     }
 
