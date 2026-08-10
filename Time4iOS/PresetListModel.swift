@@ -14,21 +14,44 @@ final class PresetListModel: ObservableObject {
     private let sync = WatchSyncController()
     private let timerEngine = TimerEngine()
     private let runningKey = "time4.iphone.runningTimer"
+    private var needsPresetMigration = false
     private var tickTask: Task<Void, Never>?
+    private var startupTask: Task<Void, Never>?
+    private var isActivated = false
 
     init() {
-        presets = store.snapshot.presets.map(Self.expandingPhoneTimers)
+        let storedPresets = store.snapshot.presets
+        let expandedPresets = storedPresets.map(Self.expandingPhoneTimers)
+        presets = expandedPresets
         isProUnlocked = store.snapshot.isProUnlocked
         runningTimers = Self.loadRunningTimers(key: runningKey)
-        store.save(presets: presets, isProUnlocked: isProUnlocked)
-        sync.start()
-        sync.send(store.snapshot)
-        requestNotificationPermission()
-        startTicker()
+        needsPresetMigration = expandedPresets != storedPresets
     }
 
     deinit {
         tickTask?.cancel()
+        startupTask?.cancel()
+    }
+
+    func activate() {
+        guard !isActivated else {
+            return
+        }
+        isActivated = true
+        startTicker()
+
+        startupTask = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(500))
+            guard let self, !Task.isCancelled else {
+                return
+            }
+            if needsPresetMigration {
+                store.save(presets: presets, isProUnlocked: isProUnlocked)
+            }
+            sync.start()
+            sync.send(Time4Snapshot(presets: presets, isProUnlocked: isProUnlocked))
+            requestNotificationPermission()
+        }
     }
 
     func addPreset() {
@@ -102,8 +125,7 @@ final class PresetListModel: ObservableObject {
 
         let runningTimer = RunningTimer(preset: preset, timer: timer, executionDevice: .iPhone)
         runningTimers.append(runningTimer)
-        persistRunningTimers()
-        scheduleNotification(for: runningTimer)
+        deferTimerSideEffects(timerID: timer.id)
     }
 
     func pause(timerID: UUID) {
@@ -111,8 +133,7 @@ final class PresetListModel: ObservableObject {
             return
         }
         runningTimers[index] = timerEngine.pause(runningTimers[index])
-        persistRunningTimers()
-        cancelTimerNotification(timerID: timerID)
+        deferTimerSideEffects(timerID: timerID)
     }
 
     func resume(timerID: UUID) {
@@ -120,14 +141,12 @@ final class PresetListModel: ObservableObject {
             return
         }
         runningTimers[index] = timerEngine.resume(runningTimers[index])
-        persistRunningTimers()
-        scheduleNotification(for: runningTimers[index])
+        deferTimerSideEffects(timerID: timerID)
     }
 
     func stopTimer(timerID: UUID) {
         runningTimers.removeAll(where: { $0.timerID == timerID })
-        persistRunningTimers()
-        cancelTimerNotification(timerID: timerID)
+        deferTimerSideEffects(timerID: timerID)
     }
 
     private func normalizeSortOrder() {
@@ -191,6 +210,22 @@ final class PresetListModel: ObservableObject {
     private func persistRunningTimers() {
         if let data = try? JSONEncoder.time4iOS.encode(runningTimers) {
             UserDefaults.standard.set(data, forKey: runningKey)
+        }
+    }
+
+    private func deferTimerSideEffects(timerID: UUID) {
+        Task { [weak self] in
+            await Task.yield()
+            guard let self else {
+                return
+            }
+            persistRunningTimers()
+
+            if let timer = runningTimers.first(where: { $0.timerID == timerID }), timer.state == .running {
+                scheduleNotification(for: timer)
+            } else {
+                cancelTimerNotification(timerID: timerID)
+            }
         }
     }
 

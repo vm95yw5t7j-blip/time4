@@ -86,6 +86,9 @@ struct PresetListView: View {
                 ProPaywallView()
                     .environmentObject(model)
             }
+            .task {
+                model.activate()
+            }
         }
     }
 }
