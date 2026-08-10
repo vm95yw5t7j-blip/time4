@@ -14,6 +14,7 @@ final class PresetListModel: ObservableObject {
     private let sync = WatchSyncController()
     private let timerEngine = TimerEngine()
     private let runningKey = "time4.iphone.runningTimer"
+    private let persistenceQueue = DispatchQueue(label: "com.naoki.Time4.running-timer-persistence")
     private var needsPresetMigration = false
     private var tickTask: Task<Void, Never>?
     private var startupTask: Task<Void, Never>?
@@ -41,7 +42,7 @@ final class PresetListModel: ObservableObject {
         startTicker()
 
         startupTask = Task { [weak self] in
-            try? await Task.sleep(for: .milliseconds(500))
+            try? await Task.sleep(for: .seconds(2))
             guard let self, !Task.isCancelled else {
                 return
             }
@@ -208,18 +209,23 @@ final class PresetListModel: ObservableObject {
     }
 
     private func persistRunningTimers() {
-        if let data = try? JSONEncoder.time4iOS.encode(runningTimers) {
-            UserDefaults.standard.set(data, forKey: runningKey)
+        let timers = runningTimers
+        let key = runningKey
+        persistenceQueue.async {
+            if let data = try? JSONEncoder.time4iOS.encode(timers) {
+                UserDefaults.standard.set(data, forKey: key)
+            }
         }
     }
 
     private func deferTimerSideEffects(timerID: UUID) {
+        persistRunningTimers()
+
         Task { [weak self] in
-            await Task.yield()
+            try? await Task.sleep(for: .milliseconds(100))
             guard let self else {
                 return
             }
-            persistRunningTimers()
 
             if let timer = runningTimers.first(where: { $0.timerID == timerID }), timer.state == .running {
                 scheduleNotification(for: timer)
