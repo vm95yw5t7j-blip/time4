@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <rect width="1024" height="1024" fill="#000000"/>
+  <circle
+    cx="512"
+    cy="512"
+    r="292"
+    fill="none"
+    stroke="#FF922E"
+    stroke-width="116"
+    stroke-linecap="round"
+    stroke-dasharray="295.580 163.093"
+    transform="rotate(16 512 512)"
+  />
+  <path
+    d="M442 384 Q442 354 469 370 L678 491 Q714 512 678 533 L469 654 Q442 670 442 640 Z"
+    fill="#FFFFFF"
+  />
+</svg>

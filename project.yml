@@ -19,6 +19,7 @@ targets:
       - target: Time4Watch Watch App
     settings:
       GENERATE_INFOPLIST_FILE: YES
+      ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
       PRODUCT_BUNDLE_IDENTIFIER: com.naoki.Time4
       MARKETING_VERSION: "0.1.0"
       CURRENT_PROJECT_VERSION: "1"
@@ -34,6 +35,7 @@ targets:
       - package: Time4Shared
     settings:
       GENERATE_INFOPLIST_FILE: YES
+      ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
       PRODUCT_BUNDLE_IDENTIFIER: com.naoki.Time4.watchkitapp
       MARKETING_VERSION: "0.1.0"
       CURRENT_PROJECT_VERSION: "1"
