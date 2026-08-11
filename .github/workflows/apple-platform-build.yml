@@ -21,6 +21,12 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
 
+      - name: Export generated Xcode project
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-xcode-project
+          path: Time4.xcodeproj
+
       - name: Test shared timer logic
         run: swift test --package-path Time4Shared
 
