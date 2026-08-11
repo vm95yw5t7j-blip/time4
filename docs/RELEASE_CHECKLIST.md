@@ -14,9 +14,9 @@
 
 ## Apple Developer / App Store Connect
 
-- [ ] 正式Bundle IDを確定する
-- [ ] iPhone・Watch両ターゲットのTeam IDを`project.yml`へ設定する
-- [ ] App Store ConnectでTime4のアプリレコードを作成する
+- [x] 正式Bundle IDを確定する
+- [x] iPhone・Watch両ターゲットのTeam IDを`project.yml`へ設定する
+- [x] App Store ConnectでTime4のアプリレコードを作成する
 - [ ] SKUと著作権表記を確定する
 - [ ] Agreements, Tax, and Bankingを完了する
 - [ ] 非消耗型App内課金`time4.pro.lifetime`を500円で作成する
