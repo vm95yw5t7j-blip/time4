@@ -3,7 +3,7 @@ import SwiftUI
 struct ProPaywallView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var model: PresetListModel
-    @StateObject private var purchaseManager = PurchaseManager()
+    @EnvironmentObject private var purchaseManager: PurchaseManager
 
     var body: some View {
         NavigationStack {
@@ -58,6 +58,13 @@ struct ProPaywallView: View {
                     model.setProUnlocked(true)
                     dismiss()
                 }
+            }
+            .onChange(of: purchaseManager.isProUnlocked) { _, isUnlocked in
+                guard isUnlocked else {
+                    return
+                }
+                model.setProUnlocked(true)
+                dismiss()
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

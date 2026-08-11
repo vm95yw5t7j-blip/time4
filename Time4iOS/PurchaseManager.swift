@@ -7,7 +7,15 @@ final class PurchaseManager: ObservableObject {
 
     @Published private(set) var product: Product?
     @Published private(set) var isLoading = false
+    @Published private(set) var isProUnlocked = false
     @Published var errorMessage: String?
+
+    private var updatesTask: Task<Void, Never>?
+    private var hasStarted = false
+
+    deinit {
+        updatesTask?.cancel()
+    }
 
     var japanesePriceText: String {
         guard let product else {
@@ -41,18 +49,46 @@ final class PurchaseManager: ObservableObject {
         }
     }
 
+    func start() async {
+        guard !hasStarted else {
+            return
+        }
+        hasStarted = true
+
+        updatesTask = Task { [weak self] in
+            for await result in Transaction.updates {
+                guard let self else {
+                    return
+                }
+                guard case .verified(let transaction) = result else {
+                    continue
+                }
+                if transaction.productID == Self.proProductID {
+                    await transaction.finish()
+                    _ = await refreshEntitlements()
+                }
+            }
+        }
+
+        await load()
+        _ = await refreshEntitlements()
+    }
+
     func refreshEntitlements() async -> Bool {
+        var unlocked = false
         for await entitlement in Transaction.currentEntitlements {
             guard case .verified(let transaction) = entitlement else {
                 continue
             }
 
             if transaction.productID == Self.proProductID {
-                return true
+                unlocked = true
+                break
             }
         }
 
-        return false
+        isProUnlocked = unlocked
+        return unlocked
     }
 
     func purchasePro() async -> Bool {
@@ -70,7 +106,7 @@ final class PurchaseManager: ObservableObject {
             switch result {
             case .success(.verified(let transaction)):
                 await transaction.finish()
-                return true
+                return await refreshEntitlements()
             case .success(.unverified), .pending, .userCancelled:
                 return false
             @unknown default:

@@ -20,7 +20,7 @@ Concept: `いつもの時間を、ワンタップで。`
 - iOS SwiftUI app: `Time4iOS`
 - watchOS SwiftUI app: `Time4Watch`
 - Project generation: `project.yml` for XcodeGen
-- StoreKit config placeholder: `StoreKit/Time4.storekit`
+- Local StoreKit test configuration: `StoreKit/Time4.storekit`
 
 ## Product Positioning
 

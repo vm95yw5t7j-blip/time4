@@ -17,10 +17,19 @@ struct PresetEditorView: View {
             Form {
                 Section("プリセット") {
                     TextField("名前", text: $preset.name)
-                    Picker("アイコン", selection: $preset.icon) {
-                        ForEach(iconChoices) { choice in
-                            Label(choice.name, systemImage: choice.symbol)
-                                .tag(choice.symbol)
+                    if model.isProUnlocked {
+                        Picker("アイコン", selection: $preset.icon) {
+                            ForEach(iconChoices) { choice in
+                                Label(choice.name, systemImage: choice.symbol)
+                                    .tag(choice.symbol)
+                            }
+                        }
+                    } else {
+                        HStack {
+                            Text("アイコン")
+                            Spacer()
+                            Label("Pro", systemImage: "lock")
+                                .foregroundStyle(.secondary)
                         }
                     }
                 }

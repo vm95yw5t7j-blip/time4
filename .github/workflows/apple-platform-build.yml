@@ -24,11 +24,18 @@ jobs:
       - name: Test shared timer logic
         run: swift test --package-path Time4Shared
 
-      - name: Build iPhone simulator app
+      - name: Validate privacy manifests
+        run: >-
+          plutil -lint
+          Time4iOS/PrivacyInfo.xcprivacy
+          Time4Watch/PrivacyInfo.xcprivacy
+
+      - name: Build release iPhone simulator app
         run: >-
           xcodebuild
           -project Time4.xcodeproj
           -scheme Time4
+          -configuration Release
           -destination 'generic/platform=iOS Simulator'
           CODE_SIGNING_ALLOWED=NO
           build

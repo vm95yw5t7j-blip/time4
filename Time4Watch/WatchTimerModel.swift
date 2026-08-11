@@ -20,7 +20,6 @@ final class WatchTimerModel: NSObject, ObservableObject {
         runningTimers = Self.loadRunningTimers(key: runningKey)
         super.init()
         startWatchConnectivity()
-        requestNotificationPermission()
         startTicker()
     }
 
@@ -147,17 +146,37 @@ final class WatchTimerModel: NSObject, ObservableObject {
             content: content,
             trigger: trigger
         )
-        UNUserNotificationCenter.current().add(request)
+        Task { [weak self] in
+            let center = UNUserNotificationCenter.current()
+            let settings = await center.notificationSettings()
+            let isAuthorized: Bool
+            switch settings.authorizationStatus {
+            case .notDetermined:
+                isAuthorized = (try? await center.requestAuthorization(options: [.alert, .sound])) == true
+            case .authorized, .provisional, .ephemeral:
+                isAuthorized = true
+            case .denied:
+                isAuthorized = false
+            @unknown default:
+                isAuthorized = false
+            }
+
+            guard
+                isAuthorized,
+                let current = self?.runningTimers.first(where: { $0.timerID == runningTimer.timerID }),
+                current.state == .running,
+                current.endsAt == runningTimer.endsAt
+            else {
+                return
+            }
+            try? await center.add(request)
+        }
     }
 
     private func cancelTimerNotification(timerID: UUID) {
         UNUserNotificationCenter.current().removePendingNotificationRequests(
             withIdentifiers: [notificationID(for: timerID)]
         )
-    }
-
-    private func requestNotificationPermission() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
     }
 
     private static func loadRunningTimers(key: String) -> [RunningTimer] {

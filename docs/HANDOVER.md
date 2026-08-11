@@ -18,7 +18,7 @@ The Pro purchase is a one-time `500円` purchase. Japanese UI displays prices us
 
 The MVP is not a sequence timer.
 
-Each timer inside a preset is independent. On Apple Watch, a preset opens to up to four large buttons in a 2x2 layout, and tapping one starts only that timer.
+Each timer inside a preset is independent. iPhone holds up to eight timers per preset. Apple Watch shows the first four as large buttons in a 2x2 layout, and tapping one starts only that timer.
 
 Timer buttons show only their duration. The MVP does not use labels such as short, normal, long, or maximum.
 
@@ -30,7 +30,7 @@ The active ring uses the following interaction:
 - Tap the running ring to pause.
 - Tap the paused ring to resume.
 - Only while paused, tap the red close button to stop and reset it.
-- Each of the four tiles can run independently and simultaneously.
+- Each visible tile can run independently and simultaneously.
 - After completion feedback, the tile automatically returns to its original duration.
 
 ## MVP
@@ -40,13 +40,13 @@ iPhone:
 - Preset list.
 - Create, edit, delete presets.
 - Reorder presets.
-- Up to 4 timers per preset.
-- 2x2 timer buttons.
+- Up to 8 timers per preset.
+- 2-column timer buttons.
 - One-tap start.
 - Remaining time.
 - In-place circular progress ring.
 - Tap to pause or resume; stop control appears while paused.
-- Up to four simultaneous timers.
+- Up to eight simultaneous timers.
 - Edit timer duration.
 - Local notification on finish.
 - Restore running timer.
@@ -72,7 +72,7 @@ iPhone:
 
 - Source of truth for preset data.
 - Preset management and Pro purchase/restore.
-- Timer use with the same preset -> 4 buttons -> instant start flow.
+- Timer use with the same preset -> registered buttons -> instant start flow.
 
 Apple Watch:
 
@@ -106,7 +106,7 @@ Future versions may add realtime shared running timer control.
 ## Engineering Rules
 
 - Timer progress must be calculated from `endsAt`.
-- A running timer's duration cannot be adjusted. Users choose one of up to four preset timers before starting.
+- A running timer's duration cannot be adjusted. Users choose one of the registered preset timers before starting.
 - Running timer state must be persisted so the watch can restore it after returning from the watch face.
 - iPhone running timer state must also be persisted so it restores after app restart.
 - Preset edits during a running timer should not mutate the active timer; the active timer stores a snapshot of the preset name and selected duration.

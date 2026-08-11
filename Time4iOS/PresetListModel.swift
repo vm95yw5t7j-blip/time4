@@ -51,7 +51,6 @@ final class PresetListModel: ObservableObject {
             }
             sync.start()
             sync.send(Time4Snapshot(presets: presets, isProUnlocked: isProUnlocked))
-            requestNotificationPermission()
         }
     }
 
@@ -235,10 +234,6 @@ final class PresetListModel: ObservableObject {
         }
     }
 
-    private func requestNotificationPermission() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
-    }
-
     private func scheduleNotification(for runningTimer: RunningTimer) {
         guard
             runningTimer.state == .running,
@@ -263,7 +258,31 @@ final class PresetListModel: ObservableObject {
             content: content,
             trigger: trigger
         )
-        UNUserNotificationCenter.current().add(request)
+        Task { [weak self] in
+            let center = UNUserNotificationCenter.current()
+            let settings = await center.notificationSettings()
+            let isAuthorized: Bool
+            switch settings.authorizationStatus {
+            case .notDetermined:
+                isAuthorized = (try? await center.requestAuthorization(options: [.alert, .sound])) == true
+            case .authorized, .provisional, .ephemeral:
+                isAuthorized = true
+            case .denied:
+                isAuthorized = false
+            @unknown default:
+                isAuthorized = false
+            }
+
+            guard
+                isAuthorized,
+                let current = self?.runningTimers.first(where: { $0.timerID == runningTimer.timerID }),
+                current.state == .running,
+                current.endsAt == runningTimer.endsAt
+            else {
+                return
+            }
+            try? await center.add(request)
+        }
     }
 
     private func cancelTimerNotification(timerID: UUID) {

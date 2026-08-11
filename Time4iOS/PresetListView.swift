@@ -3,6 +3,7 @@ import Time4Shared
 
 struct PresetListView: View {
     @EnvironmentObject private var model: PresetListModel
+    @EnvironmentObject private var purchaseManager: PurchaseManager
     @State private var editingPreset: Preset?
     @State private var editMode: EditMode = .inactive
 
@@ -59,16 +60,40 @@ struct PresetListView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    if model.isProUnlocked && model.presets.count > 1 {
-                        Button {
-                            withAnimation {
-                                editMode = editMode.isEditing ? .inactive : .active
+                    Menu {
+                        if model.isProUnlocked && model.presets.count > 1 {
+                            Button {
+                                withAnimation {
+                                    editMode = editMode.isEditing ? .inactive : .active
+                                }
+                            } label: {
+                                Label(
+                                    editMode.isEditing ? "並び替えを完了" : "プリセットを並び替え",
+                                    systemImage: editMode.isEditing ? "checkmark" : "arrow.up.arrow.down"
+                                )
                             }
-                        } label: {
-                            Image(systemName: editMode.isEditing ? "checkmark" : "arrow.up.arrow.down")
                         }
-                        .accessibilityLabel(editMode.isEditing ? "並び替えを完了" : "プリセットを並び替え")
+
+                        if !model.isProUnlocked {
+                            Button {
+                                model.showingPaywall = true
+                            } label: {
+                                Label("Time4 Pro", systemImage: "crown")
+                            }
+                        }
+
+                        Divider()
+
+                        Link(destination: AppLinks.privacyPolicy) {
+                            Label("プライバシーポリシー", systemImage: "hand.raised")
+                        }
+                        Link(destination: AppLinks.support) {
+                            Label("サポート", systemImage: "questionmark.circle")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
                     }
+                    .accessibilityLabel("メニュー")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
@@ -88,6 +113,11 @@ struct PresetListView: View {
             }
             .task {
                 model.activate()
+                await purchaseManager.start()
+                model.setProUnlocked(purchaseManager.isProUnlocked)
+            }
+            .onChange(of: purchaseManager.isProUnlocked) { _, isProUnlocked in
+                model.setProUnlocked(isProUnlocked)
             }
         }
     }
