@@ -14,7 +14,7 @@ Xcode Cloudの初回設定にはMacとXcodeが必要。最初のビルド後は�
 - GitHubへ接続できるGitまたはGitHub Desktop
 - Homebrew
 
-Appleの現在の利用要件では、Xcode CloudはApple Developer Programへの加入、Xcode 15以降、Xcodeへ追加したApple Account、App Store Connectのアプリレコードを必要とする。実際の作業では、App Store提出要件に合わせて最新の安定版Xcodeを使う。
+Xcode CloudはApple Developer Programへの加入、Xcodeへ追加したApple Account、App Store Connectのアプリレコードを必要とする。実際の作業では、App Store提出要件に合わせて最新の安定版Xcodeを使う。
 
 Apple公式資料:
 
@@ -98,7 +98,7 @@ Time4のルートで次を実行する。
 
 設定の正本は`project.yml`である。Xcode上だけでビルド設定を変えると、次のXcodeGen実行で消えるため注意する。
 
-普段の開発では生成された`Time4.xcodeproj`を作り直せるが、Xcode Cloudはプロジェクトまたはワークスペースがリポジトリ内に常に存在する構成を推奨している。Xcode Cloudを設定する前に、Macで生成・確認した`Time4.xcodeproj`をGitへ登録する。詳しくは「11. Xcode Cloud用にXcodeプロジェクトを登録する」を参照。
+普段の開発では生成された`Time4.xcodeproj`を作り直せる。Xcode Cloud用の共有プロジェクトはGitへ登録済みで、`project.yml`を変更した場合は生成結果も同じコミットで更新する。詳しくは「11. Xcode Cloud用Xcodeプロジェクトを確認する」を参照。
 
 ## 5. まずiPhoneシミュレーターで起動する
 
@@ -135,7 +135,7 @@ WatchConnectivityの完全な確認には、ペアになったiPhone・Watchシ�
 
 ## 7. Bundle IDを確定する
 
-現在の仮Bundle IDは以下。
+確定済みのBundle IDは以下。
 
 - iPhone: `com.naoki.Time4`
 - Apple Watch: `com.naoki.Time4.watchkitapp`
@@ -168,14 +168,12 @@ xcodegen generate
 6. Apple Developer ProgramのTeamを選ぶ。
 7. Watchターゲットでも同じTeamを選ぶ。
 
-Time4はXcodeGenを使うため、最終的なTeam設定は`project.yml`で管理するのが望ましい。Team IDが分かったら、両ターゲットの`settings`へ次を追加してGitHubへ反映する。
+Time4はXcodeGenを使うため、Team設定も`project.yml`で管理する。両ターゲットには次の設定を反映済み。
 
 ```yaml
-DEVELOPMENT_TEAM: YOUR_TEAM_ID
+DEVELOPMENT_TEAM: 98YMT83776
 CODE_SIGN_STYLE: Automatic
 ```
-
-Team IDをリポジトリへ保存したくない場合は、ローカルまたはCIの設定として渡す方法を別途選ぶ。
 
 ## 9. Apple DeveloperへApp IDを登録する
 
@@ -202,11 +200,11 @@ Apple Watchを含むプロジェクトでは、Xcode Cloud開始前にWatch関�
 
 Apple WatchアプリはiOSアプリに含まれるため、Time4では基本的に同じiOSアプリレコードで管理する。
 
-## 11. Xcode Cloud用にXcodeプロジェクトを登録する
+## 11. Xcode Cloud用Xcodeプロジェクトを確認する
 
 Appleは、Xcode Cloudで使用するプロジェクトまたはワークスペースがリポジトリ内に継続して存在する構成を求めている。XcodeGenなどで動的に生成・編集する構成は、初回設定や後続ビルドが失敗する可能性がある。
 
-Time4では`project.yml`を設定の正本として維持しつつ、Xcode Cloudで使う`Time4.xcodeproj`もGitへ登録する。
+Time4では`project.yml`を設定の正本として維持しつつ、Xcode Cloudで使う`Time4.xcodeproj`もGitへ登録済み。GitHub Actionsは、生成結果に差分がないことを毎回検証する。
 
 1. Bundle IDとTeam設定を`project.yml`へ反映する。
 2. Xcodeプロジェクトを再生成する。
@@ -216,7 +214,7 @@ xcodegen generate
 ```
 
 3. 生成されたプロジェクトでiPhone・Watchのビルドを確認する。
-4. `project.yml`と`Time4.xcodeproj`をGitへ追加する。
+4. 差分が発生した場合だけ、`project.yml`と`Time4.xcodeproj`をGitへ追加する。
 
 ```bash
 git add project.yml Time4.xcodeproj
@@ -383,10 +381,10 @@ Xcode Cloud:
 - [ ] `./scripts/bootstrap-mac.sh`が成功した
 - [ ] iPhoneシミュレーターでTime4が起動した
 - [ ] Apple WatchシミュレーターでTime4が起動した
-- [ ] 最終Bundle IDを決めた
-- [ ] iPhone・WatchのApp IDを登録した
-- [ ] `Time4.xcodeproj`をGitHubへ登録した
-- [ ] App Store ConnectにTime4を作成した
+- [x] 最終Bundle IDを決めた
+- [x] iPhone・WatchのApp IDを登録した
+- [x] `Time4.xcodeproj`をGitHubへ登録した
+- [x] App Store ConnectにTime4を作成した
 - [ ] Xcode CloudへGitHubアクセスを許可した
 - [ ] 最初のXcode Cloudワークフローを作成した
 - [ ] Xcode CloudのBuildが成功した

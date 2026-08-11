@@ -10,6 +10,7 @@
 - [x] App Storeメタデータ文案
 - [x] StoreKit 2購入・復元UI
 - [x] 初回タイマー開始時の通知許可要求
+- [x] Xcode Cloud用の共有Xcodeプロジェクト
 - [x] GitHub Actionsのテストとシミュレータビルド
 
 ## Apple Developer / App Store Connect
