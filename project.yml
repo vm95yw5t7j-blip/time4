@@ -27,7 +27,7 @@ targets:
       SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
       PRODUCT_BUNDLE_IDENTIFIER: com.naoki.Time4
       MARKETING_VERSION: "1.0.0"
-      CURRENT_PROJECT_VERSION: "1"
+      CURRENT_PROJECT_VERSION: "3"
       INFOPLIST_KEY_CFBundleDisplayName: Time4
       INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
       INFOPLIST_KEY_UILaunchScreen_Generation: YES
@@ -47,7 +47,7 @@ targets:
       ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
       PRODUCT_BUNDLE_IDENTIFIER: com.naoki.Time4.watchkitapp
       MARKETING_VERSION: "1.0.0"
-      CURRENT_PROJECT_VERSION: "1"
+      CURRENT_PROJECT_VERSION: "3"
       INFOPLIST_KEY_CFBundleDisplayName: Time4
       INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
       INFOPLIST_KEY_WKApplication: true
