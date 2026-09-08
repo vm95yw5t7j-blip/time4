@@ -23,7 +23,7 @@
 - [ ] 非消耗型App内課金`time4.pro.lifetime`を500円で作成する
 - [ ] App内課金の日本語表示名、説明、審査用スクリーンショットを登録する
 - [ ] App Privacyで「データを収集しない」を公開する
-- [ ] GitHub Pagesを`main`ブランチの`/docs`から公開する
+- [x] GitHub Pagesを`main`ブランチの`/docs`から公開する
 - [ ] 公開後、プライバシー・サポートURLをApp Store Connectへ登録する
 
 ## 実機検証
