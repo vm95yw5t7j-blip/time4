@@ -5,10 +5,20 @@ import UserNotifications
 
 @MainActor
 final class PresetListModel: ObservableObject {
-    @Published var presets: [Preset]
+    @Published var presets: [Preset] {
+        didSet { validateNavigation() }
+    }
+    @Published var navigationPath: [UUID] = [] {
+        didSet { persistNavigation() }
+    }
+
     @Published var isProUnlocked: Bool
     @Published var showingPaywall = false
     @Published var runningTimers: [RunningTimer]
+
+    // Screen history belongs to this device; never include it in the snapshot.
+    private let navigationKey = "time4.iphone.visiblePresetID"
+    private var hasRestoredNavigation = false
 
     private let store = SnapshotStore()
     private let sync = WatchSyncController()
@@ -32,6 +42,42 @@ final class PresetListModel: ObservableObject {
     deinit {
         tickTask?.cancel()
         startupTask?.cancel()
+    }
+
+    func restoreNavigationIfNeeded() {
+        guard !hasRestoredNavigation else { return }
+        hasRestoredNavigation = true
+
+        if let value = UserDefaults.standard.string(forKey: navigationKey),
+           let presetID = UUID(uuidString: value),
+           presets.contains(where: { $0.id == presetID }) {
+            navigationPath = [presetID]
+        } else {
+            UserDefaults.standard.removeObject(forKey: navigationKey)
+            navigationPath = []
+        }
+    }
+
+    private func persistNavigation() {
+        guard hasRestoredNavigation else { return }
+        if let presetID = navigationPath.last,
+           presets.contains(where: { $0.id == presetID }) {
+            UserDefaults.standard.set(presetID.uuidString, forKey: navigationKey)
+        } else {
+            // An empty path means the iPhone was left on the preset list.
+            UserDefaults.standard.removeObject(forKey: navigationKey)
+        }
+    }
+
+    private func validateNavigation() {
+        guard hasRestoredNavigation else { return }
+        if let value = UserDefaults.standard.string(forKey: navigationKey),
+           !presets.contains(where: { $0.id.uuidString == value }) {
+            UserDefaults.standard.removeObject(forKey: navigationKey)
+        }
+        if navigationPath.contains(where: { id in !presets.contains(where: { $0.id == id }) }) {
+            navigationPath = []
+        }
     }
 
     func activate() {

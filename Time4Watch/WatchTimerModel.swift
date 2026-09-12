@@ -7,8 +7,18 @@ import WatchKit
 
 @MainActor
 final class WatchTimerModel: NSObject, ObservableObject {
-    @Published var presets: [Preset]
+    @Published var presets: [Preset] {
+        didSet { validateNavigation() }
+    }
+    @Published var navigationPath: [UUID] = [] {
+        didSet { persistNavigation() }
+    }
+
     @Published var runningTimers: [RunningTimer]
+
+    // Screen history belongs to this device; never include it in the snapshot.
+    private let navigationKey = "time4.watch.lastOpenedPresetID"
+    private var hasRestoredNavigation = false
 
     private let store = SnapshotStore()
     private let engine = TimerEngine()
@@ -25,6 +35,39 @@ final class WatchTimerModel: NSObject, ObservableObject {
 
     deinit {
         tickTask?.cancel()
+    }
+
+    func restoreNavigationIfNeeded() {
+        guard !hasRestoredNavigation else { return }
+        hasRestoredNavigation = true
+
+        if let value = UserDefaults.standard.string(forKey: navigationKey),
+           let presetID = UUID(uuidString: value),
+           presets.contains(where: { $0.id == presetID }) {
+            navigationPath = [presetID]
+        } else {
+            UserDefaults.standard.removeObject(forKey: navigationKey)
+            navigationPath = []
+        }
+    }
+
+    private func persistNavigation() {
+        guard hasRestoredNavigation else { return }
+        if let presetID = navigationPath.last,
+           presets.contains(where: { $0.id == presetID }) {
+            UserDefaults.standard.set(presetID.uuidString, forKey: navigationKey)
+        } // Returning to the Watch list keeps the last-opened preset.
+    }
+
+    private func validateNavigation() {
+        guard hasRestoredNavigation else { return }
+        if let value = UserDefaults.standard.string(forKey: navigationKey),
+           !presets.contains(where: { $0.id.uuidString == value }) {
+            UserDefaults.standard.removeObject(forKey: navigationKey)
+        }
+        if navigationPath.contains(where: { id in !presets.contains(where: { $0.id == id }) }) {
+            navigationPath = []
+        }
     }
 
     func start(preset: Preset, timer: TimerItem) {

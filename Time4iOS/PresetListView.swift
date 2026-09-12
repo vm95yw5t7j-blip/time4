@@ -8,12 +8,10 @@ struct PresetListView: View {
     @State private var editMode: EditMode = .inactive
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $model.navigationPath) {
             List {
                 ForEach(model.presets) { preset in
-                    NavigationLink {
-                        TimerGridPhoneView(presetID: preset.id)
-                    } label: {
+                    NavigationLink(value: preset.id) {
                         HStack(spacing: 14) {
                             Image(systemName: preset.icon)
                                 .font(.title2)
@@ -50,6 +48,11 @@ struct PresetListView: View {
                 }
                 .onDelete(perform: model.delete)
                 .onMove(perform: model.move)
+            }
+            .navigationDestination(for: UUID.self) { presetID in
+                if model.presets.contains(where: { $0.id == presetID }) {
+                    TimerGridPhoneView(presetID: presetID)
+                }
             }
             .environment(\.editMode, $editMode)
             .contentMargins(.top, 4, for: .scrollContent)
@@ -111,14 +114,17 @@ struct PresetListView: View {
                 ProPaywallView()
                     .environmentObject(model)
             }
-            .task {
-                model.activate()
-                await purchaseManager.start()
-                model.setProUnlocked(purchaseManager.isProUnlocked)
-            }
-            .onChange(of: purchaseManager.isProUnlocked) { _, isProUnlocked in
-                model.setProUnlocked(isProUnlocked)
-            }
+        }
+        .onAppear {
+            model.restoreNavigationIfNeeded()
+        }
+        .task {
+            model.activate()
+            await purchaseManager.start()
+            model.setProUnlocked(purchaseManager.isProUnlocked)
+        }
+        .onChange(of: purchaseManager.isProUnlocked) { _, isProUnlocked in
+            model.setProUnlocked(isProUnlocked)
         }
     }
 }

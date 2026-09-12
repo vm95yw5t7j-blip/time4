@@ -5,5 +5,8 @@ struct WatchRootView: View {
 
     var body: some View {
         PresetListWatchView()
+            .onAppear {
+                model.restoreNavigationIfNeeded()
+            }
     }
 }
