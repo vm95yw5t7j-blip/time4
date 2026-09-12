@@ -38,9 +38,34 @@ struct PresetEditorView: View {
                     ForEach(Array(preset.timers.indices), id: \.self) { index in
                         TimerEditorRow(
                             number: index + 1,
+                            isPhoneOnly: !watchPreviewTimers.contains(where: { $0.id == preset.timers[index].id }),
                             timer: $preset.timers[index]
                         )
                     }
+                }
+
+                Section {
+                    LazyVGrid(
+                        columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 2),
+                        spacing: 8
+                    ) {
+                        ForEach(watchPreviewTimers) { timer in
+                            Text(String(format: "%d:%02d", timer.durationSeconds / 60, timer.durationSeconds % 60))
+                                .font(.system(.headline, design: .rounded))
+                                .monospacedDigit()
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.6)
+                                .frame(maxWidth: .infinity, minHeight: 52)
+                                .foregroundStyle(.orange)
+                                .background(Color(white: 0.12), in: RoundedRectangle(cornerRadius: 8))
+                        }
+                    }
+                    .frame(maxWidth: 240)
+                    .frame(maxWidth: .infinity)
+                } header: {
+                    Text("Apple Watchプレビュー")
+                } footer: {
+                    Text("Apple Watchには先頭の\(Time4Policy.watchTimersPerPreset)個のタイマーが表示されます。")
                 }
             }
             .contentMargins(.top, 6, for: .scrollContent)
@@ -72,6 +97,10 @@ struct PresetEditorView: View {
         }
     }
 
+    private var watchPreviewTimers: [TimerItem] {
+        Array(preset.timers.sorted().prefix(Time4Policy.watchTimersPerPreset))
+    }
+
     private var iconChoices: [IconChoice] {
         [
             IconChoice(symbol: "timer", name: "タイマー"),
@@ -100,12 +129,20 @@ private struct IconChoice: Identifiable {
 
 private struct TimerEditorRow: View {
     let number: Int
+    let isPhoneOnly: Bool
     @Binding var timer: TimerItem
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("タイマー\(number)")
-                .font(.subheadline.weight(.semibold))
+            HStack {
+                Text("タイマー\(number)")
+                    .font(.subheadline.weight(.semibold))
+                if isPhoneOnly {
+                    Text("iPhoneのみ")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
 
             HStack(spacing: 7) {
                 timeField(value: minutes, placeholder: "0")
