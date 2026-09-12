@@ -29,7 +29,7 @@ final class WatchTimerModel: NSObject, ObservableObject {
 
     func start(preset: Preset, timer: TimerItem) {
         guard
-            runningTimers.count < Time4Policy.maxTimersPerPreset,
+            runningTimers.count < Time4Policy.watchTimersPerPreset,
             !runningTimers.contains(where: { $0.timerID == timer.id })
         else {
             return
