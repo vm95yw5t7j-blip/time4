@@ -80,4 +80,5 @@ Xcodeを開き、`Time4.xcodeproj` を開く。
 
 | 日付 | 検証コミット(`git rev-parse HEAD`) | 項目 | 結果 | メモ |
 |------|------|------|------|------|
-|      |      |      |      |      |
+| 2026-09-13 | d4c7a65以降（Xcode Cloud TestFlightビルド） | iPhone基本動作（開始・一時停止・再開・終了） | OK | 8タイマー同時実行は未確認 |
+| 2026-09-13 | d4c7a65以降（Xcode Cloud TestFlightビルド） | Watch実機インストール・先頭4タイマー操作 | OK | |
