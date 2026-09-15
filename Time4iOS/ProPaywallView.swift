@@ -36,7 +36,7 @@ struct ProPaywallView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
-                    .disabled(purchaseManager.isLoading)
+                    .disabled(purchaseManager.isLoading || purchaseManager.isPurchasing)
                     Button("購入を復元") {
                         Task {
                             if await purchaseManager.restore() {
@@ -45,6 +45,7 @@ struct ProPaywallView: View {
                             }
                         }
                     }
+                    .disabled(purchaseManager.isPurchasing)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16)

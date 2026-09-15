@@ -7,6 +7,7 @@ final class PurchaseManager: ObservableObject {
 
     @Published private(set) var product: Product?
     @Published private(set) var isLoading = false
+    @Published private(set) var isPurchasing = false
     @Published private(set) var isProUnlocked = false
     @Published var errorMessage: String?
 
@@ -60,11 +61,25 @@ final class PurchaseManager: ObservableObject {
                 guard let self else {
                     return
                 }
-                guard case .verified(let transaction) = result else {
+
+                // 未検証でもfinishしないとStoreKitが同じ取引を再配信し続ける
+                let transaction: Transaction
+                let isVerified: Bool
+                switch result {
+                case .verified(let value):
+                    transaction = value
+                    isVerified = true
+                case .unverified(let value, _):
+                    transaction = value
+                    isVerified = false
+                }
+
+                guard transaction.productID == Self.proProductID else {
                     continue
                 }
-                if transaction.productID == Self.proProductID {
-                    await transaction.finish()
+
+                await transaction.finish()
+                if isVerified {
                     _ = await refreshEntitlements()
                 }
             }
@@ -92,6 +107,12 @@ final class PurchaseManager: ObservableObject {
     }
 
     func purchasePro() async -> Bool {
+        guard !isPurchasing else {
+            return false
+        }
+        isPurchasing = true
+        defer { isPurchasing = false }
+
         if product == nil {
             await load()
         }
@@ -107,7 +128,11 @@ final class PurchaseManager: ObservableObject {
             case .success(.verified(let transaction)):
                 await transaction.finish()
                 return await refreshEntitlements()
-            case .success(.unverified), .pending, .userCancelled:
+            case .success(.unverified(let transaction, _)):
+                await transaction.finish()
+                errorMessage = "購入を確認できませんでした。"
+                return false
+            case .pending, .userCancelled:
                 return false
             @unknown default:
                 return false
