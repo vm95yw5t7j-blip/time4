@@ -99,49 +99,59 @@ MVP仕様:
 
 ## 5. 未完了の作業
 
-App Store Connect / Developer:
+2026-09-16時点で、App Store Connect側の設定と実機検証はほぼ完了している。詳細な進捗は `docs/RELEASE_CHECKLIST.md` を正とする。
 
-- SKUと著作権表記の確定。
-- Agreements, Tax, and Bankingの完了。
-- 非消耗型App内課金 `time4.pro.lifetime` を500円で作成。
-- App内課金の日本語表示名、説明、審査用スクリーンショット登録。
-- App Privacyで「データを収集しない」を公開。
-- GitHub Pagesを `main` ブランチの `/docs` から公開。
-- 公開後、プライバシー・サポートURLをApp Store Connectへ登録。
+残作業:
 
-実機検証:
+- Xcode Cloudビルド15（購入シート重複修正を含む）のTestFlight配信待ち。
+- ビルド15での購入ボタン連打テスト（購入シートが1つだけ出ることの確認）。
+- 購入済み状態でのプリセット並び替え、アイコン変更の確認。
+- App Store Connectのバージョン1.0.0で、ビルドを14から15へ差し替え。
+- 1.0.0と初回App内課金 `time4.pro.lifetime` を同じ提出で「審査へ提出」。
 
-- Release構成でiPhone実機ビルド。
-- Apple Watch実機インストール。
-- 初回通知許可、拒否、設定変更確認。
-- iPhoneで8タイマーの開始・一時停止・再開・終了確認。
-- Watchで先頭4タイマーの操作確認。
-- 画面消灯、バックグラウンド、アプリ再起動後の残り時間確認。
-- 消音オン・オフで音と触覚の挙動確認。
-- iPhoneとWatchが通信できない状態で最後の同期データを使えるか確認。
-- プリセット編集後のWatch同期確認。
-- StoreKitローカル購入・復元確認。
-- SandboxまたはTestFlightで実商品購入・復元確認。
-- 購入済み状態でプリセット無制限、並び替え、アイコン変更確認。
+実施できていない項目:
 
-提出素材:
+- StoreKitローカル購入・復元確認。このホストにXcode本体が無く、シミュレータでStoreKit設定ファイルを使ったテストができないため。TestFlight経由のSandbox購入で実質的な確認は済んでいる。
 
-- iPhone 6.9インチ用スクリーンショット3から5枚。
-- Apple Watch用スクリーンショット。
-- スクリーンショットに透明部分がないことの確認。
-- 説明文、サブタイトル、キーワード登録。
-- App Review連絡先、App Reviewメモ登録。
-- TestFlight内部テスト完了。
-- 1.0.0と初回App内課金を同じ審査提出へ追加。
+## 5.1 2026-09-16に完了した作業
+
+App Store Connect:
+
+- SKU、著作権表記（`© 2026 Naoki Ito`）を設定。
+- Agreements, Tax, and Bankingがすべて「有効」であることを確認（有料アプリ契約、銀行口座、W-8BEN）。
+- 非消耗型App内課金 `time4.pro.lifetime` を500円で作成し、日本語ローカリゼーションと審査用スクリーンショットを登録。
+- App Privacyで「データを収集しない」を公開。プライバシーポリシーURLを登録。
+- カテゴリ（ユーティリティ／仕事効率化）、コンテンツ配信権、年齢制限指定（4+）、価格（無料）、配信地域を設定。
+- 説明文、サブタイトル、プロモーション用テキスト、キーワード、サポート／マーケティングURLを登録。
+- App Review連絡先と審査メモを登録。自動リリースを選択。
+- 提出物の下書きにIAPとバージョン1.0.0を追加済み（未提出）。
+
+スクリーンショット:
+
+- iPhone 6.9インチ（1320x2868）3枚と、Apple Watch Ultra 2（410x502）3枚を作成して登録。見出し付きのマーケティング版を `/tmp` の生成スクリプトで作成した。
+- IAP審査用スクリーンショットは6.9インチ規格が通らず、6.5インチ規格（1284x2778）でのみ受け付けられた。
+
+実機検証（iPhone 17 Pro Max / Apple Watch Ultra 2）:
+
+- 初回通知許可、拒否、設定変更。
+- 画面消灯、バックグラウンド、アプリ再起動後の残り時間復元。
+- 消音オン・オフでの音と触覚。
+- iPhone・Watch非通信時に最後の同期データで動作すること。
+- プリセット編集後のWatch同期。
+- TestFlight経由のSandbox購入（実請求なし）と、再インストール後の自動entitlement復元。
+
+不具合修正:
+
+- 購入ボタン連打で購入シートが積み上がる不具合を修正（コミット3bc91d3）。
 
 ## 6. 次にやるべき作業と優先順位
 
-1. Remote（SSH / Mac mini）でこのリポジトリを開き、`git status --short --branch` と `git log -1 --oneline` を確認する。
-2. この `HANDOVER.md`、`docs/HANDOVER.md`、`docs/RELEASE_CHECKLIST.md`、`docs/MVP_TASKS.md` を読む。
-3. まだcommitされていない `docs/HANDOVER.md` と `AGENTS.md` の扱いをユーザーに確認する。勝手にcommitしない。
-4. GitHub Pages公開またはApp Store Connect作業のどちらを進めるか、ユーザー指示を待つ。
-5. 実装を触る場合は、先に対象仕様と完了条件を確認し、不要なrefactorやUI変更を避ける。
-6. App Store前は、実機iPhone/Apple WatchとStoreKit/TestFlightの確認を優先する。
+1. Xcode Cloudのビルド15が完了し、TestFlightに配信されているか確認する。
+2. iPhoneのTestFlightでビルド15に更新し、Pro購入画面で購入ボタンを連打して、購入シートが1つしか出ないことを確認する。
+3. 購入済み状態でプリセットの並び替えとアイコン変更が動くことを確認する。
+4. App Store Connectのバージョン1.0.0で、ビルドを14から15へ差し替える。
+5. 提出物の下書き（バージョン1.0.0 + IAP `time4.pro.lifetime`）を「審査へ提出」する。
+6. 実装を触る場合は、先に対象仕様と完了条件を確認し、不要なrefactorやUI変更を避ける。
 
 ## 7. 重要な設計判断と、その理由
 
@@ -179,42 +189,37 @@ App Store Connect / Developer:
 
 ## 9. 現在判明している不具合・注意点・技術的負債
 
-- GitHub Pages予定URLは現時点で404。`docs/RELEASE_CHECKLIST.md` 上もGitHub Pages公開は未完了。
-- Netlify設定ファイルは見つかっていない。Netlify反映はない。
-- GitHub CLIの `gh run list` はこの環境ではラン一覧を返さなかったため、最新GitHub Actions状態は未確認。
-- このホストでは `xcodebuild -version` が失敗した。active developer directory が `/Library/Developer/CommandLineTools` で、Xcode本体ではないため。
-- このホストでは `swift test --package-path Time4Shared` が `no such module 'XCTest'` で失敗した。Xcode本体がactive developer directoryになっていないことが原因と見られる。
-- 前スレッド上では、Xcode CloudのBuild 8が警告・エラーなしで成功し、内部テスター自動配信設定まで完了したと記録されている。ただし現在のローカル環境からApp Store Connectの実状態は確認していない。
-- 実機でのWatch通知、触覚、腕下げ、文字盤復帰、WatchConnectivityは未検証。
-- StoreKit実商品購入・復元は未検証。
+- **このホストにXcode本体がインストールされていない。** `/Applications` にXcode.appが無く、active developer directoryは `/Library/Developer/CommandLineTools`。そのため `xcodebuild`、シミュレータ実行、`swift test --package-path Time4Shared`（`no such module 'XCTest'`）がすべて失敗する。ビルド検証はGitHub ActionsとXcode Cloudに依存している。
+- **IAP審査用スクリーンショットは6.5インチ規格（1284x2778）しか受け付けない。** App Store掲載用に使う6.9インチ規格（1320x2868）をアップロードすると「寸法が正しくありません」で弾かれる。
+- `project.yml` の `CURRENT_PROJECT_VERSION` は `3` のままだが、実際のTestFlightビルド番号はXcode Cloudが自動採番している（2026-09-15時点で14）。手動で合わせる必要はないが、値が実態と乖離している点に注意。
+- Xcode Cloudのワークフローはmainへのpushで自動起動しなかった。ビルドはApp Store Connectから手動で開始する必要がある。
+- `ci_scripts/` は存在するが空。
 - `docs/MVP_TASKS.md` の「Set real bundle identifiers and Apple Developer Team ID」は古い未完了項目として残っているが、`project.yml` と `docs/RELEASE_CHECKLIST.md` ではBundle IDとTeam IDは設定済み。
-- `docs/HANDOVER.md` と未追跡 `AGENTS.md` は作業ルール追加を含むが、まだcommitされていない。
+- Netlify設定ファイルは見つかっていない。Netlify反映はない。
+
+解消済み:
+
+- GitHub Pagesの3URLは2026-09-15時点でいずれもHTTP 200。公開済み。
+- 購入ボタン連打で購入シートが積み上がる不具合はコミット3bc91d3で修正済み（ビルド15で要検証）。
+- StoreKit実商品購入・復元は、TestFlight経由のSandbox購入で検証済み。
 
 ## 10. Gitの現在状態
 
-確認時点:
+確認時点: 2026-09-16
 
 - branch: `main`
 - upstream: `origin/main`
-- status: `main...origin/main`
-- 最新commit: `316fa32a1d093c17712108d340e0624c21199203`
-- 最新commit概要: `316fa32 Bump TestFlight build to 3`
+- 最新commit: `3bc91d3 Prevent duplicate purchase sheets from repeated taps`
 - remote: `https://github.com/vm95yw5t7j-blip/time4.git`
-
-未コミット変更:
-
-- modified: `docs/HANDOVER.md`
-- untracked: `AGENTS.md`
-- untracked: `HANDOVER.md`（この引き継ぎ文書）
 
 既存の未追跡ファイル、確認用画像、一時ファイルは、明示指示なしにcommit対象へ含めない。
 
-今回の引き継ぎ作成後の検証結果:
+検証結果:
 
-- `plutil -lint Time4iOS/PrivacyInfo.xcprivacy Time4Watch/PrivacyInfo.xcprivacy`: OK
-- `swift test --package-path Time4Shared`: 失敗。`XCTest` が見つからない。
+- GitHub Actions `Apple platform build`（run 34986264538）: 成功。共有ロジックのテスト、Privacy Manifest検証、Release構成のiPhoneシミュレータビルドがすべてパス。
+- `swift test --package-path Time4Shared`: このホストでは失敗。`XCTest` が見つからない（Xcode本体が無いため）。
 - `xcodebuild -version`: 失敗。active developer directory がCommand Line Tools。
-- iPhone Simulator Release build: 未実行。`xcodebuild` が使えないため。
+- ローカルでのiPhone Simulator Release build: 未実行。`xcodebuild` が使えないため、GitHub Actions側で代替検証している。
 
 ## 11. 開発・起動・確認に必要なコマンド
 
@@ -303,10 +308,16 @@ Bundle ID:
 Version/build:
 
 - `MARKETING_VERSION`: `1.0.0`
-- `CURRENT_PROJECT_VERSION`: `3`
-- 前スレッド上のXcode Cloud配布ビルド: Build `8` 成功記録あり
+- `CURRENT_PROJECT_VERSION`: `3`（project.yml上の値。実際のビルド番号はXcode Cloudが自動採番）
+- TestFlight配信済みビルド: `1.0.0 (14)`
+- ビルド15: 購入シート重複修正を含む。2026-09-16未明にXcode Cloudで手動起動済み。
 
-予定URL:
+App Store Connect上のIAP:
+
+- 参照名 `Time4 Pro` / 製品ID `time4.pro.lifetime` / Apple ID `6800293118`
+- 非消耗型、500円、ファミリー共有オフ
+
+公開URL:
 
 - Marketing: `https://vm95yw5t7j-blip.github.io/time4/`
 - Support: `https://vm95yw5t7j-blip.github.io/time4/support.html`
@@ -314,7 +325,7 @@ Version/build:
 
 現時点のURL状態:
 
-- 上記3URLはいずれもHTTP 404を返した。GitHub Pages公開は未完了と扱う。
+- 上記3URLはいずれもHTTP 200。App Store Connectへ登録済み。
 
 本番操作ルール:
 
