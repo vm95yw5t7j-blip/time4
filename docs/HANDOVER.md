@@ -113,3 +113,5 @@ Future versions may add realtime shared running timer control.
 - Running timer state stores `startedAt`, `endsAt`, pause state, paused remaining seconds, timer ID, preset ID, and execution device.
 - Free to Pro upgrade must keep existing data.
 - Restore purchase must be implemented before App Store submission.
+- If a copy interaction is introduced, the target must copy with one tap and show visible completion feedback after a successful copy.
+- Do not deploy or publish to Netlify, or change Netlify configuration, without an explicit instruction to do so.
