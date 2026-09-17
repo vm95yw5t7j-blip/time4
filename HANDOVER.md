@@ -99,7 +99,7 @@ MVP仕様:
 
 ## 5. 未完了の作業
 
-2026-09-17時点で、ビルド15を1.0.0 + `time4.pro.lifetime`として審査再提出済み、ステータスは「審査待ち」。詳細な進捗は `docs/RELEASE_CHECKLIST.md` を正とする。
+2026-09-18時点で、ビルド17を1.0.0 + `time4.pro.lifetime`として審査再提出済み、ステータスは「審査待ち」。詳細な進捗は `docs/RELEASE_CHECKLIST.md` を正とする。
 
 残作業:
 
@@ -118,6 +118,17 @@ MVP仕様:
 - アプリの購入判定ロジック自体にバグは無いと判断し、コード変更は行っていない。
 - App Store Connectの「App Reviewに返信」機能で、アプリの目的・アクセス方法・外部サービス一覧・地域差・IAP概要などの7項目に日本語で回答し、画面収録を添付して送信。
 - ビルド15を1.0.0として再提出し、「審査待ち」に戻ったことを確認済み（2026-09-17）。
+
+## 5.3 2026-09-18に対応した審査却下（Guideline 5.2.5 / Guideline 4）
+
+2回目の審査（ビルド15、実機iPad Air 11-inch M3）で、実際に2件の指摘を受けた。
+
+- Guideline 5.2.5 - Legal - Intellectual Property: App Storeのサブタイトルで「Apple Watch」という商標を不適切な形で使用していると指摘。サブタイトルを `手首からすぐ使えるタイマー` に変更（説明文中の「Apple Watch」への言及は指摘されておらず変更していない）。
+- Guideline 4 - Design: Apple Watchアプリアイコンの背景色が黒で、watchOSの丸型マスクにかけると円形に見えないと指摘。`Time4Watch/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png` の背景をブランドカラーのオレンジに変更し、リングと再生マークを黒に反転（コミット9415f31）。
+
+Xcode Cloudでビルド17を作成し、1.0.0として再提出。ステータスは「審査待ち」（2026-09-18）。
+
+このホストにXcode本体がインストールされた（2026-09-17〜18の間）。`swift test --package-path Time4Shared` と `plutil -lint` はローカルで実行・パス確認済み。ただし `xcodebuild` でのシミュレータビルドは、Xcodeのシミュレータプラグインの初回セットアップ（`xcodebuild -runFirstLaunch`）が未実施のため失敗する。GitHub Actions側のビルドは成功している。
 
 ## 5.1 2026-09-16に完了した作業
 
