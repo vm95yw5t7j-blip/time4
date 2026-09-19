@@ -56,6 +56,8 @@ struct TimerGridWatchView: View {
                         .background(Color.red)
                         .foregroundStyle(.white)
                         .clipShape(Circle())
+                        .frame(width: 44, height: 44, alignment: .topTrailing)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .padding(3)
