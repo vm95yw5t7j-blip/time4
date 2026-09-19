@@ -35,6 +35,20 @@
                ReferencedContainer = "container:Time4.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3D6CD2E3FFCD19BC354DB499"
+               BuildableName = "Time4WatchWidget.appex"
+               BlueprintName = "Time4WatchWidget"
+               ReferencedContainer = "container:Time4.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

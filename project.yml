@@ -26,7 +26,7 @@ targets:
       SUPPORTS_MACCATALYST: NO
       SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
       PRODUCT_BUNDLE_IDENTIFIER: com.naoki.Time4
-      MARKETING_VERSION: "1.0.0"
+      MARKETING_VERSION: "1.0.1"
       CURRENT_PROJECT_VERSION: "3"
       INFOPLIST_KEY_CFBundleDisplayName: Time4
       INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
@@ -40,24 +40,49 @@ targets:
       - Time4Watch
     dependencies:
       - package: Time4Shared
+      - target: Time4WatchWidget
+        embed: true
     settings:
       GENERATE_INFOPLIST_FILE: YES
       CODE_SIGN_STYLE: Automatic
       DEVELOPMENT_TEAM: 98YMT83776
       ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
       PRODUCT_BUNDLE_IDENTIFIER: com.naoki.Time4.watchkitapp
-      MARKETING_VERSION: "1.0.0"
+      MARKETING_VERSION: "1.0.1"
       CURRENT_PROJECT_VERSION: "3"
       INFOPLIST_KEY_CFBundleDisplayName: Time4
       INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
       INFOPLIST_KEY_WKApplication: true
       INFOPLIST_KEY_WKCompanionAppBundleIdentifier: com.naoki.Time4
+  Time4WatchWidget:
+    type: app-extension
+    platform: watchOS
+    sources:
+      - Time4WatchWidget
+    info:
+      path: Time4WatchWidget/Info.plist
+      properties:
+        CFBundleDisplayName: Time4
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        ITSAppUsesNonExemptEncryption: false
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      CODE_SIGN_STYLE: Automatic
+      DEVELOPMENT_TEAM: 98YMT83776
+      PRODUCT_BUNDLE_IDENTIFIER: com.naoki.Time4.watchkitapp.widget
+      MARKETING_VERSION: "1.0.1"
+      CURRENT_PROJECT_VERSION: "3"
+      SKIP_INSTALL: YES
+      APPLICATION_EXTENSION_API_ONLY: YES
 schemes:
   Time4:
     build:
       targets:
         Time4: all
         Time4Watch Watch App: all
+        Time4WatchWidget: all
     run:
       config: Debug
       storeKitConfiguration: StoreKit/Time4.storekit
@@ -65,5 +90,6 @@ schemes:
     build:
       targets:
         Time4Watch Watch App: all
+        Time4WatchWidget: all
     run:
       config: Debug

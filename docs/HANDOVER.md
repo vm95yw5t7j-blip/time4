@@ -66,6 +66,11 @@ Apple Watch:
 - Up to four simultaneous timers.
 - Haptic feedback on finish.
 
+## Post-MVP Additions
+
+- Version 1.0.1 adds WidgetKit watch-face complications in circular, rectangular, inline, and corner families.
+- Tapping the complication opens the existing Watch app. Starting a specific timer directly from the watch face remains deferred.
+
 ## Device Roles
 
 iPhone:
